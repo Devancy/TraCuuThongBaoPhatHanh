@@ -38,6 +38,8 @@ namespace TraCuuThongBaoPhatHanh
                 _tokenSource.Cancel();
                 _tokenSource = new CancellationTokenSource();
             }
+
+            //await Action(new CancellationToken());
         }
 
         private async Task Action(CancellationToken ct)
@@ -80,12 +82,10 @@ namespace TraCuuThongBaoPhatHanh
                 {
                     if (_driver == null || !_driver.WindowHandles.Any())
                         _driver = InitializeChrome();
-                    _driver.Manage().Window.Maximize();
                 }
                 catch
                 {
                     _driver = InitializeChrome();
-                    _driver.Manage().Window.Maximize();
                 }
 
                 if (string.IsNullOrWhiteSpace(_driver.Url) || _driver.Url == "data:,")
@@ -117,11 +117,11 @@ namespace TraCuuThongBaoPhatHanh
 
                     CheckCancellation();
                     // date From
-                    await TypeSlowMo(_driver, By.Id("ngayTu"), $"001/01/{year}", 2).ConfigureAwait(false);
+                    await TypeSlowMo(_driver, By.Id("ngayTu"), $" 01/01/{year}", 2).ConfigureAwait(false);
 
                     CheckCancellation();
                     // date To
-                    await TypeSlowMo(_driver, By.Id("ngayDen"), "0" + new DateTime(year + 1, 1, 1).AddDays(-1).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture), 5).ConfigureAwait(false);
+                    await TypeSlowMo(_driver, By.Id("ngayDen"), " " + new DateTime(year + 1, 1, 1).AddDays(-1).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture), 2).ConfigureAwait(false);
 
                     CheckCancellation();
                     var js = (IJavaScriptExecutor)_driver;
@@ -315,6 +315,14 @@ namespace TraCuuThongBaoPhatHanh
         {
             _driver?.Quit();
             Program.Exit();
+        }
+
+        private void TextBoxTaxCode_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == System.Windows.Forms.Keys.Enter)
+            {
+                ButtonSubmit_Click(this, new EventArgs());
+            }
         }
     }
 }

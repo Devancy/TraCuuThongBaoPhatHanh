@@ -33,17 +33,18 @@
             this.comboBoxYear = new System.Windows.Forms.ComboBox();
             this.textBoxTaxCode = new System.Windows.Forms.TextBox();
             this.panelMain = new System.Windows.Forms.Panel();
+            this.checkBoxAutoOpenLatest = new System.Windows.Forms.CheckBox();
             this.labelNote = new System.Windows.Forms.Label();
             this.labelDiviner = new System.Windows.Forms.Label();
             this.labelYear = new System.Windows.Forms.Label();
             this.labelTaxCode = new System.Windows.Forms.Label();
-            this.checkBoxAutoOpenLatest = new System.Windows.Forms.CheckBox();
             this.panelMain.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonSubmit
             // 
             this.buttonSubmit.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.buttonSubmit.BackColor = System.Drawing.SystemColors.Control;
             this.buttonSubmit.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.buttonSubmit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonSubmit.Location = new System.Drawing.Point(257, 143);
@@ -51,7 +52,7 @@
             this.buttonSubmit.Size = new System.Drawing.Size(197, 27);
             this.buttonSubmit.TabIndex = 3;
             this.buttonSubmit.Text = "Tra cứu";
-            this.buttonSubmit.UseVisualStyleBackColor = true;
+            this.buttonSubmit.UseVisualStyleBackColor = false;
             this.buttonSubmit.Click += new System.EventHandler(this.ButtonSubmit_Click);
             // 
             // comboBoxYear
@@ -73,6 +74,7 @@
             this.textBoxTaxCode.Name = "textBoxTaxCode";
             this.textBoxTaxCode.Size = new System.Drawing.Size(197, 23);
             this.textBoxTaxCode.TabIndex = 0;
+            this.textBoxTaxCode.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextBoxTaxCode_KeyDown);
             // 
             // panelMain
             // 
@@ -89,6 +91,20 @@
             this.panelMain.Name = "panelMain";
             this.panelMain.Size = new System.Drawing.Size(495, 251);
             this.panelMain.TabIndex = 3;
+            // 
+            // checkBoxAutoOpenLatest
+            // 
+            this.checkBoxAutoOpenLatest.AutoSize = true;
+            this.checkBoxAutoOpenLatest.Checked = true;
+            this.checkBoxAutoOpenLatest.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxAutoOpenLatest.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkBoxAutoOpenLatest.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.checkBoxAutoOpenLatest.Location = new System.Drawing.Point(34, 149);
+            this.checkBoxAutoOpenLatest.Name = "checkBoxAutoOpenLatest";
+            this.checkBoxAutoOpenLatest.Size = new System.Drawing.Size(178, 17);
+            this.checkBoxAutoOpenLatest.TabIndex = 2;
+            this.checkBoxAutoOpenLatest.Text = "Tự động mở thông báo mới nhất";
+            this.checkBoxAutoOpenLatest.UseVisualStyleBackColor = true;
             // 
             // labelNote
             // 
@@ -116,9 +132,9 @@
             this.labelYear.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelYear.Location = new System.Drawing.Point(31, 103);
             this.labelYear.Name = "labelYear";
-            this.labelYear.Size = new System.Drawing.Size(37, 16);
+            this.labelYear.Size = new System.Drawing.Size(98, 16);
             this.labelYear.TabIndex = 3;
-            this.labelYear.Text = "Năm";
+            this.labelYear.Text = "Năm phát hành";
             // 
             // labelTaxCode
             // 
@@ -129,20 +145,6 @@
             this.labelTaxCode.Size = new System.Drawing.Size(78, 17);
             this.labelTaxCode.TabIndex = 3;
             this.labelTaxCode.Text = "Mã số thuế";
-            // 
-            // checkBoxAutoOpenLatest
-            // 
-            this.checkBoxAutoOpenLatest.AutoSize = true;
-            this.checkBoxAutoOpenLatest.Checked = true;
-            this.checkBoxAutoOpenLatest.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxAutoOpenLatest.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBoxAutoOpenLatest.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.checkBoxAutoOpenLatest.Location = new System.Drawing.Point(34, 149);
-            this.checkBoxAutoOpenLatest.Name = "checkBoxAutoOpenLatest";
-            this.checkBoxAutoOpenLatest.Size = new System.Drawing.Size(177, 17);
-            this.checkBoxAutoOpenLatest.TabIndex = 2;
-            this.checkBoxAutoOpenLatest.Text = "Tự dộng mở thông báo mới nhất";
-            this.checkBoxAutoOpenLatest.UseVisualStyleBackColor = true;
             // 
             // FormMain
             // 
