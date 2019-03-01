@@ -18,19 +18,5 @@ namespace TraCuuThongBaoPhatHanh
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new FormMain());
         }
-
-        internal static void Exit()
-        {
-            if (System.Windows.Forms.Application.MessageLoop)
-            {
-                // WinForms app
-                System.Windows.Forms.Application.Exit();
-            }
-            else
-            {
-                // Console app
-                System.Environment.Exit(1);
-            }
-        }
     }
 }

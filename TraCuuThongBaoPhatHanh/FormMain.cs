@@ -2,6 +2,7 @@
 using OpenQA.Selenium.Chrome;
 using System;
 using System.Configuration;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -314,8 +315,14 @@ namespace TraCuuThongBaoPhatHanh
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
+            this.Hide();
+            this.ShowInTaskbar = false;
             _driver?.Quit();
-            Program.Exit();
+            foreach (var process in Process.GetProcessesByName("chromedriver"))
+            {
+                process.Kill();
+            }
+            Application.Exit();
         }
 
         private void TextBoxTaxCode_KeyDown(object sender, KeyEventArgs e)
