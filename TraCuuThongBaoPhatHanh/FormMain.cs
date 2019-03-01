@@ -64,10 +64,10 @@ namespace TraCuuThongBaoPhatHanh
 
                 Invoke((MethodInvoker)(() =>
                 {
-                    textBoxTaxCode.Text = textBoxTaxCode.Text.Replace("-", "").Replace(" ", "");
+                    textBoxTaxCode.Text = textBoxTaxCode.Text.Replace(" ", "");
                 }));
 
-                if (!Regex.IsMatch(textBoxTaxCode.Text, "^[0-9]*$"))
+                if (!Regex.IsMatch(textBoxTaxCode.Text, "^[0-9-]*$"))
                 {
                     Blink(labelNote, "Mã số thuế thì chỉ có số thôi mợ ạ", Color.Red);
                     Invoke((MethodInvoker)(() =>
@@ -167,6 +167,7 @@ namespace TraCuuThongBaoPhatHanh
                         _tokenSource.Cancel();
                         _tokenSource = new CancellationTokenSource();
                     }
+
                 } while (string.IsNullOrWhiteSpace(captcha));
 
                 if (checkBoxAutoOpenLatest.Checked)
