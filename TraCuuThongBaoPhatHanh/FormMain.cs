@@ -20,10 +20,13 @@ namespace TraCuuThongBaoPhatHanh
         private IWebDriver _driver;
         private CancellationTokenSource _tokenSource = new CancellationTokenSource();
         private readonly string _mainUrl = ConfigurationManager.AppSettings["host"] ?? "http://tracuuhoadon.gdt.gov.vn/tbphtc.html";
+        private static string _noteText;
+        private static Color _noteTextColor;
         public FormMain()
         {
             InitializeComponent();
-
+            _noteText = labelNote.Text;
+            _noteTextColor = labelNote.ForeColor;
             comboBoxYear.DataSource = new[] { DateTime.Today.Year, DateTime.Today.Year - 1, DateTime.Today.Year - 2 };
         }
 
@@ -32,7 +35,7 @@ namespace TraCuuThongBaoPhatHanh
             if (buttonSubmit.Text.StartsWith("T"))
             {
                 var token = _tokenSource.Token;
-                await (Task.Factory.StartNew(() => Action(token), token));
+                await Task.Factory.StartNew(() => Action(token), token);
             }
             else
             {
@@ -97,7 +100,7 @@ namespace TraCuuThongBaoPhatHanh
                 {
                     _driver.Navigate().Refresh();
                 }
-                // solve captcha
+                
                 string captcha = string.Empty;
                 int year = 0;
                 Invoke((MethodInvoker)(() =>
@@ -125,6 +128,8 @@ namespace TraCuuThongBaoPhatHanh
                     await TypeSlowMo(_driver, By.Id("ngayDen"), " " + new DateTime(year + 1, 1, 1).AddDays(-1).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture), 2).ConfigureAwait(false);
 
                     CheckCancellation();
+
+                    // solve captcha
                     var js = (IJavaScriptExecutor)_driver;
                     var base64String = js.ExecuteScript(@"
                     var c = document.createElement('canvas');
@@ -288,8 +293,6 @@ namespace TraCuuThongBaoPhatHanh
 
         private async void Blink(Label label, string text, Color color)
         {
-            var originalText = label.Text;
-            var originColor = label.ForeColor;
             panelMain?.Invoke((MethodInvoker)(() => label.Text = text));
             int i = 1;
             while (i <= 10)
@@ -308,8 +311,8 @@ namespace TraCuuThongBaoPhatHanh
             }
             panelMain?.Invoke((MethodInvoker)(() =>
             {
-                label.Text = originalText;
-                label.ForeColor = originColor;
+                label.Text = _noteText;
+                label.ForeColor = _noteTextColor;
             }));
         }
 
