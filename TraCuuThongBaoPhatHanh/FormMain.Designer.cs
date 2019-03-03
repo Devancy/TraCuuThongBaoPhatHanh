@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.buttonSubmit = new System.Windows.Forms.Button();
-            this.comboBoxYear = new System.Windows.Forms.ComboBox();
+            this.comboBoxYearTo = new System.Windows.Forms.ComboBox();
             this.textBoxTaxCode = new System.Windows.Forms.TextBox();
             this.panelMain = new System.Windows.Forms.Panel();
             this.checkBoxAutoOpenLatest = new System.Windows.Forms.CheckBox();
@@ -38,6 +38,8 @@
             this.labelDiviner = new System.Windows.Forms.Label();
             this.labelYear = new System.Windows.Forms.Label();
             this.labelTaxCode = new System.Windows.Forms.Label();
+            this.comboBoxYearFrom = new System.Windows.Forms.ComboBox();
+            this.labelHyphen = new System.Windows.Forms.Label();
             this.panelMain.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -55,16 +57,17 @@
             this.buttonSubmit.UseVisualStyleBackColor = false;
             this.buttonSubmit.Click += new System.EventHandler(this.ButtonSubmit_Click);
             // 
-            // comboBoxYear
+            // comboBoxYearTo
             // 
-            this.comboBoxYear.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.comboBoxYear.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxYear.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBoxYear.FormattingEnabled = true;
-            this.comboBoxYear.Location = new System.Drawing.Point(257, 98);
-            this.comboBoxYear.Name = "comboBoxYear";
-            this.comboBoxYear.Size = new System.Drawing.Size(197, 24);
-            this.comboBoxYear.TabIndex = 1;
+            this.comboBoxYearTo.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.comboBoxYearTo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxYearTo.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBoxYearTo.FormattingEnabled = true;
+            this.comboBoxYearTo.Location = new System.Drawing.Point(383, 98);
+            this.comboBoxYearTo.Name = "comboBoxYearTo";
+            this.comboBoxYearTo.Size = new System.Drawing.Size(71, 24);
+            this.comboBoxYearTo.TabIndex = 2;
+            this.comboBoxYearTo.SelectedIndexChanged += new System.EventHandler(this.ComboBoxYearTo_SelectedValueChanged);
             // 
             // textBoxTaxCode
             // 
@@ -81,10 +84,12 @@
             this.panelMain.Controls.Add(this.checkBoxAutoOpenLatest);
             this.panelMain.Controls.Add(this.labelNote);
             this.panelMain.Controls.Add(this.labelDiviner);
+            this.panelMain.Controls.Add(this.labelHyphen);
             this.panelMain.Controls.Add(this.labelYear);
             this.panelMain.Controls.Add(this.labelTaxCode);
             this.panelMain.Controls.Add(this.textBoxTaxCode);
-            this.panelMain.Controls.Add(this.comboBoxYear);
+            this.panelMain.Controls.Add(this.comboBoxYearFrom);
+            this.panelMain.Controls.Add(this.comboBoxYearTo);
             this.panelMain.Controls.Add(this.buttonSubmit);
             this.panelMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelMain.Location = new System.Drawing.Point(0, 0);
@@ -130,11 +135,11 @@
             // 
             this.labelYear.AutoSize = true;
             this.labelYear.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelYear.Location = new System.Drawing.Point(31, 103);
+            this.labelYear.Location = new System.Drawing.Point(31, 101);
             this.labelYear.Name = "labelYear";
-            this.labelYear.Size = new System.Drawing.Size(98, 16);
+            this.labelYear.Size = new System.Drawing.Size(125, 16);
             this.labelYear.TabIndex = 3;
-            this.labelYear.Text = "Năm phát hành";
+            this.labelYear.Text = "Thời gian phát hành";
             // 
             // labelTaxCode
             // 
@@ -146,12 +151,34 @@
             this.labelTaxCode.TabIndex = 3;
             this.labelTaxCode.Text = "Mã số thuế";
             // 
+            // comboBoxYearFrom
+            // 
+            this.comboBoxYearFrom.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.comboBoxYearFrom.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxYearFrom.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBoxYearFrom.FormattingEnabled = true;
+            this.comboBoxYearFrom.Location = new System.Drawing.Point(257, 98);
+            this.comboBoxYearFrom.Name = "comboBoxYearFrom";
+            this.comboBoxYearFrom.Size = new System.Drawing.Size(71, 24);
+            this.comboBoxYearFrom.TabIndex = 1;
+            // 
+            // labelHyphen
+            // 
+            this.labelHyphen.AutoSize = true;
+            this.labelHyphen.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelHyphen.Location = new System.Drawing.Point(348, 97);
+            this.labelHyphen.Name = "labelHyphen";
+            this.labelHyphen.Size = new System.Drawing.Size(15, 16);
+            this.labelHyphen.TabIndex = 3;
+            this.labelHyphen.Text = "_";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(495, 251);
             this.Controls.Add(this.panelMain);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "FormMain";
@@ -167,7 +194,7 @@
         #endregion
 
         private System.Windows.Forms.Button buttonSubmit;
-        private System.Windows.Forms.ComboBox comboBoxYear;
+        private System.Windows.Forms.ComboBox comboBoxYearTo;
         private System.Windows.Forms.TextBox textBoxTaxCode;
         private System.Windows.Forms.Panel panelMain;
         private System.Windows.Forms.Label labelTaxCode;
@@ -175,6 +202,8 @@
         private System.Windows.Forms.Label labelDiviner;
         private System.Windows.Forms.Label labelNote;
         private System.Windows.Forms.CheckBox checkBoxAutoOpenLatest;
+        private System.Windows.Forms.ComboBox comboBoxYearFrom;
+        private System.Windows.Forms.Label labelHyphen;
     }
 }
 

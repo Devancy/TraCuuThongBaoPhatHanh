@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Tesseract;
+using TraCuuThongBaoPhatHanh.Service;
 
 namespace TraCuuThongBaoPhatHanh
 {
@@ -22,12 +22,16 @@ namespace TraCuuThongBaoPhatHanh
         private readonly string _mainUrl = ConfigurationManager.AppSettings["host"] ?? "http://tracuuhoadon.gdt.gov.vn/tbphtc.html";
         private static string _noteText;
         private static Color _noteTextColor;
+        private readonly IBaseService _baseService;
+        private readonly int[] _years = new[] { DateTime.Today.Year, DateTime.Today.Year - 1, DateTime.Today.Year - 2 };
         public FormMain()
         {
             InitializeComponent();
+            _baseService = ServiceHelper.GetService();
             _noteText = labelNote.Text;
             _noteTextColor = labelNote.ForeColor;
-            comboBoxYear.DataSource = new[] { DateTime.Today.Year, DateTime.Today.Year - 1, DateTime.Today.Year - 2 };
+            comboBoxYearFrom.DataSource = _years;
+            comboBoxYearTo.DataSource = _years;
         }
 
         private async void ButtonSubmit_Click(object sender, EventArgs e)
@@ -35,15 +39,13 @@ namespace TraCuuThongBaoPhatHanh
             if (buttonSubmit.Text.StartsWith("T"))
             {
                 var token = _tokenSource.Token;
-                await Task.Factory.StartNew(() => Action(token), token);
+                await Action(token);
             }
             else
             {
                 _tokenSource.Cancel();
                 _tokenSource = new CancellationTokenSource();
             }
-
-            //await Action(new CancellationToken());
         }
 
         private async Task Action(CancellationToken ct)
@@ -100,12 +102,14 @@ namespace TraCuuThongBaoPhatHanh
                 {
                     _driver.Navigate().Refresh();
                 }
-                
+
                 string captcha = string.Empty;
-                int year = 0;
+                int yearFrom = 0;
+                int yearTo = 0;
                 Invoke((MethodInvoker)(() =>
                 {
-                    year = int.Parse(comboBoxYear.SelectedItem.ToString());
+                    yearFrom = int.Parse(comboBoxYearFrom.SelectedItem.ToString());
+                    yearTo = int.Parse(comboBoxYearTo.SelectedItem.ToString());
                 }));
 
                 do
@@ -121,11 +125,11 @@ namespace TraCuuThongBaoPhatHanh
 
                     CheckCancellation();
                     // date From
-                    await TypeSlowMo(_driver, By.Id("ngayTu"), $" 01/01/{year}", 2).ConfigureAwait(false);
+                    await TypeSlowMo(_driver, By.Id("ngayTu"), $" 01/01/{yearFrom}", 2).ConfigureAwait(false);
 
                     CheckCancellation();
                     // date To
-                    await TypeSlowMo(_driver, By.Id("ngayDen"), " " + new DateTime(year + 1, 1, 1).AddDays(-1).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture), 2).ConfigureAwait(false);
+                    await TypeSlowMo(_driver, By.Id("ngayDen"), " " + new DateTime(yearTo + 1, 1, 1).AddDays(-1).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture), 2).ConfigureAwait(false);
 
                     CheckCancellation();
 
@@ -143,14 +147,17 @@ namespace TraCuuThongBaoPhatHanh
                     return base64String;
                     ") as string;
                     var base64 = base64String?.Split(',').Last();
-                    using (var stream = new MemoryStream(Convert.FromBase64String(base64)))
-                    using (var bitmap = new Bitmap(stream))
-                    {
-                        bitmap.Save("Captcha.png", System.Drawing.Imaging.ImageFormat.Png);
-                    }
+                    //using (var stream = new MemoryStream(Convert.FromBase64String(base64)))
+                    //using (var bitmap = new Bitmap(stream))
+                    //{
+                    //    bitmap.Save("Captcha.png", System.Drawing.Imaging.ImageFormat.Png);
+                    //}
+                    var captchaFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Captcha.png");
+                    captchaFile = SaveBytesToFile(captchaFile, Convert.FromBase64String(base64));
 
                     CheckCancellation();
-                    captcha = GetText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Captcha.png"));
+                    captcha = _baseService.ImageOcrToText(captchaFile);
+                    captcha = Regex.Replace(captcha, "[^0-9a-zA-Z]", "");
 
                     if (!string.IsNullOrWhiteSpace(captcha))
                     {
@@ -183,7 +190,7 @@ namespace TraCuuThongBaoPhatHanh
                     for (var i = 0; i < 3; i++)
                     {
                         CheckCancellation();
-                        var links = _driver.FindElements(By.PartialLinkText($"{year}"));
+                        var links = _driver.FindElements(By.PartialLinkText($"{yearTo}"));
                         var latest = links.LastOrDefault();
                         if (latest != null)
                         {
@@ -264,24 +271,6 @@ namespace TraCuuThongBaoPhatHanh
             }
         }
 
-        private static string GetText(string imgPath)
-        {
-            try
-            {
-                using (var engine = new TesseractEngine("./tessdata", "eng", EngineMode.Default))
-                using (var img = Pix.LoadFromFile(imgPath))
-                using (var page = engine.Process(img))
-                {
-                    return Regex.Replace(page.GetText(), "[^0-9a-zA-Z]", "");
-                }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show($"Có lỗi xảy ra: {e}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return null;
-            }
-        }
-
         private static ChromeDriver InitializeChrome()
         {
             var chromeDriverService = ChromeDriverService.CreateDefaultService();
@@ -334,6 +323,49 @@ namespace TraCuuThongBaoPhatHanh
             {
                 ButtonSubmit_Click(this, new EventArgs());
             }
+        }
+
+        private void ComboBoxYearTo_SelectedValueChanged(object sender, EventArgs e)
+        {
+            var selectedFrom = int.Parse(comboBoxYearFrom.SelectedValue.ToString());
+            var rest = _years.Where(_ => _ <= int.Parse(comboBoxYearTo.SelectedValue.ToString())).ToArray();
+            comboBoxYearFrom.DataSource = rest.ToArray();
+            if (rest.Contains(selectedFrom))
+            {
+                comboBoxYearFrom.SelectedIndex = Array.IndexOf(rest, selectedFrom);
+            }
+        }
+
+        private static string SaveBytesToFile(string fileFullPath, byte[] bytes)
+        {
+            var directory = Path.GetDirectoryName(fileFullPath);
+            try
+            {
+                var extenstion = Path.GetExtension(fileFullPath);
+                foreach (var file in Directory.GetFiles(directory, $"*{extenstion}"))
+                {
+                    File.Delete(file);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            var desiredFileFullName = ServiceHelper.GetDesiredFileFullPath(directory, fileFullPath);
+            // Create a FileStream object to write a stream to a file
+            using (Stream stream = new MemoryStream(bytes))
+            using (var fileStream = new FileStream(fileFullPath, FileMode.Create, FileAccess.ReadWrite, FileShare.Read, (int)stream.Length))
+            {
+                // Fill the bytes[] array with the stream data
+                byte[] bytesInStream = new byte[stream.Length];
+                stream.Read(bytesInStream, 0, (int)bytesInStream.Length);
+
+                // Use FileStream object to write to the specified file
+                fileStream.Write(bytesInStream, 0, bytesInStream.Length);
+            }
+
+            return desiredFileFullName;
         }
     }
 }
