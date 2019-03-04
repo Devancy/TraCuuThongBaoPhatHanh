@@ -50,7 +50,7 @@ namespace TraCuuThongBaoPhatHanh.Service
             return desiredFileFullPath;
         }
 
-        public void DebugToggleToolStripMenuItem_Click(object sender, EventArgs e)
+        public void UpdateAppConfigAppSettingsService(object sender, EventArgs e)
         {
             var exeConfig = System.Reflection.Assembly.GetEntryAssembly().GetName().Name + ".config";
             if (System.IO.File.Exists(exeConfig))
