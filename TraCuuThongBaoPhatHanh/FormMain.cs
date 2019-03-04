@@ -194,7 +194,7 @@ namespace TraCuuThongBaoPhatHanh
                     for (var i = 0; i < 3; i++)
                     {
                         CheckCancellation();
-                        var links = _driver.FindElements(By.PartialLinkText($"{yearTo}"));
+                        var links = _driver.FindElements(By.CssSelector("a[class='textlink']"));
                         var latest = links.LastOrDefault();
                         if (latest != null)
                         {
