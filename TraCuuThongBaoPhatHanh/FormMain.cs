@@ -415,7 +415,7 @@ namespace TraCuuThongBaoPhatHanh
             //Want to change update form size then uncomment below line.
             //AutoUpdater.UpdateFormSize = new System.Drawing.Size(800, 600);
 
-            AutoUpdater.Start("https://github.com/Devancy/TraCuuThongBaoPhatHanh/master/Deploy/AutoUpdater.xml");
+            AutoUpdater.Start("https://raw.githubusercontent.com/Devancy/TraCuuThongBaoPhatHanh/master/TraCuuThongBaoPhatHanh/Deploy/AutoUpdater.xml");
         }
 
         private void AutoUpdater_ApplicationExitEvent()
