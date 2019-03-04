@@ -394,7 +394,7 @@ namespace TraCuuThongBaoPhatHanh
             //AutoUpdater.AppTitle = "My Custom Application Title";
 
             //Want to show errors then uncomment below line.
-            AutoUpdater.ReportErrors = true;
+            //AutoUpdater.ReportErrors = true;
 
             //Want to handle how your application will exit when application finished downloading then uncomment below line.
             //AutoUpdater.ApplicationExitEvent += AutoUpdater_ApplicationExitEvent;
