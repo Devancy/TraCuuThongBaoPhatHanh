@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AutoUpdaterDotNET;
+//using AutoUpdaterDotNET;
 using TraCuuThongBaoPhatHanh.Service;
 
 namespace TraCuuThongBaoPhatHanh
@@ -25,6 +25,7 @@ namespace TraCuuThongBaoPhatHanh
         private static Color _noteTextColor;
         private readonly IBaseService _baseService;
         private readonly int[] _years = new[] { DateTime.Today.Year, DateTime.Today.Year - 1, DateTime.Today.Year - 2 };
+        private volatile bool _running = false;
         public FormMain()
         {
             InitializeComponent();
@@ -37,10 +38,13 @@ namespace TraCuuThongBaoPhatHanh
 
         private async void ButtonSubmit_Click(object sender, EventArgs e)
         {
-            if (buttonSubmit.Text.StartsWith("T"))
+            if (!_running)
             {
+                _running = true;
+                //var token = _tokenSource.Token;
+                //await Action(token);
                 var token = _tokenSource.Token;
-                await Action(token);
+                await Task.Factory.StartNew(() => Action(token), token);
             }
             else
             {
@@ -221,6 +225,7 @@ namespace TraCuuThongBaoPhatHanh
 
                 MessageBox.Show($"Có lỗi xảy ra: {ex.Message}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
+            _running = false;
 
             // local functions
             void Invoke(Delegate method)
@@ -232,6 +237,7 @@ namespace TraCuuThongBaoPhatHanh
             {
                 if (ct.IsCancellationRequested)
                 {
+                    _running = false;
                     ct.ThrowIfCancellationRequested();
                 }
             }
@@ -388,10 +394,10 @@ namespace TraCuuThongBaoPhatHanh
             //AutoUpdater.AppTitle = "My Custom Application Title";
 
             //Want to show errors then uncomment below line.
-            AutoUpdater.ReportErrors = true;
+            //AutoUpdater.ReportErrors = true;
 
             //Want to handle how your application will exit when application finished downloading then uncomment below line.
-            AutoUpdater.ApplicationExitEvent += AutoUpdater_ApplicationExitEvent;
+            //AutoUpdater.ApplicationExitEvent += AutoUpdater_ApplicationExitEvent;
 
             //Want to handle update logic yourself then uncomment below line.
             //AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
@@ -409,13 +415,13 @@ namespace TraCuuThongBaoPhatHanh
             //timer.Start();
 
             //Uncomment following lines to enable forced updates.
-            AutoUpdater.Mandatory = true;
-            AutoUpdater.UpdateMode = Mode.Forced;
+            //AutoUpdater.Mandatory = true;
+            //AutoUpdater.UpdateMode = Mode.Forced;
 
             //Want to change update form size then uncomment below line.
             //AutoUpdater.UpdateFormSize = new System.Drawing.Size(800, 600);
 
-            AutoUpdater.Start("https://raw.githubusercontent.com/Devancy/TraCuuThongBaoPhatHanh/master/TraCuuThongBaoPhatHanh/Deploy/AutoUpdater.xml");
+            //AutoUpdater.Start("https://rbsoft.org/updates/AutoUpdaterTest.xml");
         }
 
         private void AutoUpdater_ApplicationExitEvent()
