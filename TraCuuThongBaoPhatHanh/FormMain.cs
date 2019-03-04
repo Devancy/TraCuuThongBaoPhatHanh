@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using AutoUpdaterDotNET;
 using TraCuuThongBaoPhatHanh.Service;
 
 namespace TraCuuThongBaoPhatHanh
@@ -152,8 +153,7 @@ namespace TraCuuThongBaoPhatHanh
                     //{
                     //    bitmap.Save("Captcha.png", System.Drawing.Imaging.ImageFormat.Png);
                     //}
-                    var captchaFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Captcha.png");
-                    captchaFile = SaveBytesToFile(captchaFile, Convert.FromBase64String(base64));
+                    var captchaFile = SaveBytesToFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Captcha.png"), Convert.FromBase64String(base64));
 
                     CheckCancellation();
                     captcha = _baseService.ImageOcrToText(captchaFile);
@@ -366,6 +366,63 @@ namespace TraCuuThongBaoPhatHanh
             }
 
             return desiredFileFullName;
+        }
+
+        private void FormMain_Load(object sender, EventArgs e)
+        {
+            //Uncomment below line to run update process using non administrator account.
+            //AutoUpdater.RunUpdateAsAdmin = false;
+
+            //Don't want user to select remind later time in AutoUpdater notification window then uncomment 3 lines below so default remind later time will be set to 2 days.
+            //AutoUpdater.LetUserSelectRemindLater = false;
+            //AutoUpdater.RemindLaterTimeSpan = RemindLaterFormat.Minutes;
+            //AutoUpdater.RemindLaterAt = 1;
+
+            //Don't want to show Skip button then uncomment below line.
+            //AutoUpdater.ShowSkipButton = false;
+
+            //Don't want to show Remind Later button then uncomment below line.
+            //AutoUpdater.ShowRemindLaterButton = false;
+
+            //Want to show custom application title then uncomment below line.
+            //AutoUpdater.AppTitle = "My Custom Application Title";
+
+            //Want to show errors then uncomment below line.
+            AutoUpdater.ReportErrors = true;
+
+            //Want to handle how your application will exit when application finished downloading then uncomment below line.
+            AutoUpdater.ApplicationExitEvent += AutoUpdater_ApplicationExitEvent;
+
+            //Want to handle update logic yourself then uncomment below line.
+            //AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
+
+            //Want to check for updates frequently then uncomment following lines.
+            //System.Timers.Timer timer = new System.Timers.Timer
+            //{
+            //    Interval = 2 * 60 * 1000,
+            //    SynchronizingObject = this
+            //};
+            //timer.Elapsed += delegate
+            //{
+            //    AutoUpdater.Start("https://rbsoft.org/updates/AutoUpdaterTest.xml");
+            //};
+            //timer.Start();
+
+            //Uncomment following lines to enable forced updates.
+            AutoUpdater.Mandatory = true;
+            AutoUpdater.UpdateMode = Mode.Forced;
+
+            //Want to change update form size then uncomment below line.
+            //AutoUpdater.UpdateFormSize = new System.Drawing.Size(800, 600);
+
+            AutoUpdater.Start("https://github.com/Devancy/TraCuuThongBaoPhatHanh/master/Deploy/AutoUpdater.xml");
+        }
+
+        private void AutoUpdater_ApplicationExitEvent()
+        {
+            Text = @"Closing application...";
+            Thread.Sleep(5000);
+            Application.Exit();
         }
     }
 }

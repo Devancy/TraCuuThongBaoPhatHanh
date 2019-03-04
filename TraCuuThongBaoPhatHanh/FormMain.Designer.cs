@@ -36,10 +36,10 @@
             this.checkBoxAutoOpenLatest = new System.Windows.Forms.CheckBox();
             this.labelNote = new System.Windows.Forms.Label();
             this.labelDiviner = new System.Windows.Forms.Label();
+            this.labelHyphen = new System.Windows.Forms.Label();
             this.labelYear = new System.Windows.Forms.Label();
             this.labelTaxCode = new System.Windows.Forms.Label();
             this.comboBoxYearFrom = new System.Windows.Forms.ComboBox();
-            this.labelHyphen = new System.Windows.Forms.Label();
             this.panelMain.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -131,6 +131,16 @@
             this.labelDiviner.TabIndex = 4;
             this.labelDiviner.Text = "____________________________________________________________________________";
             // 
+            // labelHyphen
+            // 
+            this.labelHyphen.AutoSize = true;
+            this.labelHyphen.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelHyphen.Location = new System.Drawing.Point(348, 97);
+            this.labelHyphen.Name = "labelHyphen";
+            this.labelHyphen.Size = new System.Drawing.Size(15, 16);
+            this.labelHyphen.TabIndex = 3;
+            this.labelHyphen.Text = "_";
+            // 
             // labelYear
             // 
             this.labelYear.AutoSize = true;
@@ -162,16 +172,6 @@
             this.comboBoxYearFrom.Size = new System.Drawing.Size(71, 24);
             this.comboBoxYearFrom.TabIndex = 1;
             // 
-            // labelHyphen
-            // 
-            this.labelHyphen.AutoSize = true;
-            this.labelHyphen.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelHyphen.Location = new System.Drawing.Point(348, 97);
-            this.labelHyphen.Name = "labelHyphen";
-            this.labelHyphen.Size = new System.Drawing.Size(15, 16);
-            this.labelHyphen.TabIndex = 3;
-            this.labelHyphen.Text = "_";
-            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -185,6 +185,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Tra cứu thông báo phát hành - Lưu hành nội bộ";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
+            this.Load += new System.EventHandler(this.FormMain_Load);
             this.panelMain.ResumeLayout(false);
             this.panelMain.PerformLayout();
             this.ResumeLayout(false);
