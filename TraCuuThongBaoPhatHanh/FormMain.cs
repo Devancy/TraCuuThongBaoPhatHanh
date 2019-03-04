@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-//using AutoUpdaterDotNET;
+using AutoUpdaterDotNET;
 using TraCuuThongBaoPhatHanh.Service;
 
 namespace TraCuuThongBaoPhatHanh
@@ -394,7 +394,7 @@ namespace TraCuuThongBaoPhatHanh
             //AutoUpdater.AppTitle = "My Custom Application Title";
 
             //Want to show errors then uncomment below line.
-            //AutoUpdater.ReportErrors = true;
+            AutoUpdater.ReportErrors = true;
 
             //Want to handle how your application will exit when application finished downloading then uncomment below line.
             //AutoUpdater.ApplicationExitEvent += AutoUpdater_ApplicationExitEvent;
@@ -414,20 +414,20 @@ namespace TraCuuThongBaoPhatHanh
             //};
             //timer.Start();
 
-            //Uncomment following lines to enable forced updates.
-            //AutoUpdater.Mandatory = true;
-            //AutoUpdater.UpdateMode = Mode.Forced;
+            //Uncomment following lines to enable forced download.
+            AutoUpdater.Mandatory = true;
+            AutoUpdater.UpdateMode = Mode.ForcedDownload;
 
             //Want to change update form size then uncomment below line.
-            //AutoUpdater.UpdateFormSize = new System.Drawing.Size(800, 600);
+            AutoUpdater.UpdateFormSize = new System.Drawing.Size(800, 600);
 
-            //AutoUpdater.Start("https://rbsoft.org/updates/AutoUpdaterTest.xml");
+            AutoUpdater.Start("https://raw.githubusercontent.com/Devancy/TraCuuThongBaoPhatHanh/master/TraCuuThongBaoPhatHanh/Deploy/AutoUpdater.xml");
         }
 
         private void AutoUpdater_ApplicationExitEvent()
         {
             Text = @"Closing application...";
-            Thread.Sleep(5000);
+            //Thread.Sleep(5000);
             Application.Exit();
         }
     }
