@@ -40,6 +40,7 @@
             this.labelYear = new System.Windows.Forms.Label();
             this.labelTaxCode = new System.Windows.Forms.Label();
             this.comboBoxYearFrom = new System.Windows.Forms.ComboBox();
+            this.labelVersion = new System.Windows.Forms.Label();
             this.panelMain.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -82,6 +83,7 @@
             // panelMain
             // 
             this.panelMain.Controls.Add(this.checkBoxAutoOpenLatest);
+            this.panelMain.Controls.Add(this.labelVersion);
             this.panelMain.Controls.Add(this.labelNote);
             this.panelMain.Controls.Add(this.labelDiviner);
             this.panelMain.Controls.Add(this.labelHyphen);
@@ -115,7 +117,7 @@
             // 
             this.labelNote.AutoSize = true;
             this.labelNote.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.labelNote.Location = new System.Drawing.Point(138, 215);
+            this.labelNote.Location = new System.Drawing.Point(254, 215);
             this.labelNote.Name = "labelNote";
             this.labelNote.Size = new System.Drawing.Size(200, 13);
             this.labelNote.TabIndex = 5;
@@ -172,6 +174,18 @@
             this.comboBoxYearFrom.Size = new System.Drawing.Size(71, 24);
             this.comboBoxYearFrom.TabIndex = 1;
             // 
+            // labelVersion
+            // 
+            this.labelVersion.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.labelVersion.AutoSize = true;
+            this.labelVersion.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.labelVersion.Location = new System.Drawing.Point(34, 215);
+            this.labelVersion.Name = "labelVersion";
+            this.labelVersion.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.labelVersion.Size = new System.Drawing.Size(28, 13);
+            this.labelVersion.TabIndex = 5;
+            this.labelVersion.Text = "v.10";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -205,6 +219,7 @@
         private System.Windows.Forms.CheckBox checkBoxAutoOpenLatest;
         private System.Windows.Forms.ComboBox comboBoxYearFrom;
         private System.Windows.Forms.Label labelHyphen;
+        private System.Windows.Forms.Label labelVersion;
     }
 }
 

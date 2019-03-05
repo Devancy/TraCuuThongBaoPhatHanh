@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,6 +35,7 @@ namespace TraCuuThongBaoPhatHanh
             _noteTextColor = labelNote.ForeColor;
             comboBoxYearFrom.DataSource = _years;
             comboBoxYearTo.DataSource = _years;
+            labelVersion.Text = $"v.{new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version}";
         }
 
         private async void ButtonSubmit_Click(object sender, EventArgs e)
@@ -410,7 +412,7 @@ namespace TraCuuThongBaoPhatHanh
             //};
             //timer.Elapsed += delegate
             //{
-            //    AutoUpdater.Start("https://rbsoft.org/updates/AutoUpdaterTest.xml");
+            //    AutoUpdater.Start("https://raw.githubusercontent.com/Devancy/TraCuuThongBaoPhatHanh/master/TraCuuThongBaoPhatHanh/Deploy/AutoUpdater.xml");
             //};
             //timer.Start();
 
