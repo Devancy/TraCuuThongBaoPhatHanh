@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TraCuuThongBaoPhatHanh", "TraCuuThongBaoPhatHanh\TraCuuThongBaoPhatHanh.csproj", "{FF3AFD7C-02CE-4DE7-BCB7-2226B8D8DB47}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoUpdater.NET", "AutoUpdater.NET\AutoUpdater.NET.csproj", "{FB9E7E6B-B19F-4F37-A708-2996190CEF13}"
+	ProjectSection(ProjectDependencies) = postProject
+		{91DE558C-6DB8-429B-A069-C0491DCFF15B} = {91DE558C-6DB8-429B-A069-C0491DCFF15B}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZipExtractor", "ZipExtractor\ZipExtractor.csproj", "{91DE558C-6DB8-429B-A069-C0491DCFF15B}"
 EndProject

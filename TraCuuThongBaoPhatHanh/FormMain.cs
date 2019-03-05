@@ -44,7 +44,7 @@ namespace TraCuuThongBaoPhatHanh
                 //var token = _tokenSource.Token;
                 //await Action(token);
                 var token = _tokenSource.Token;
-                await Task.Factory.StartNew(() => Action(token), token);
+                await Task.Factory.StartNew(() => Action(token), token).ConfigureAwait(false);
             }
             else
             {
@@ -377,7 +377,7 @@ namespace TraCuuThongBaoPhatHanh
         private void FormMain_Load(object sender, EventArgs e)
         {
             //Uncomment below line to run update process using non administrator account.
-            //AutoUpdater.RunUpdateAsAdmin = false;
+            AutoUpdater.RunUpdateAsAdmin = false;
 
             //Don't want user to select remind later time in AutoUpdater notification window then uncomment 3 lines below so default remind later time will be set to 2 days.
             //AutoUpdater.LetUserSelectRemindLater = false;
@@ -415,8 +415,8 @@ namespace TraCuuThongBaoPhatHanh
             //timer.Start();
 
             //Uncomment following lines to enable forced download.
-            AutoUpdater.Mandatory = true;
-            AutoUpdater.UpdateMode = Mode.ForcedDownload;
+            //AutoUpdater.Mandatory = true;
+            //AutoUpdater.UpdateMode = Mode.ForcedDownload;
 
             //Want to change update form size then uncomment below line.
             AutoUpdater.UpdateFormSize = new System.Drawing.Size(800, 600);

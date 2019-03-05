@@ -53,7 +53,7 @@ namespace AutoUpdaterDotNET
         Forced,
 
         /// <summary>
-        /// In this mode, it will start downloading and applying update without showing standarad update dialog in addition to Forced mode behaviour.
+        /// In this mode, it will start downloading and applying update without showing standard update dialog in addition to Forced mode behaviour.
         /// </summary>
         ForcedDownload
     }
