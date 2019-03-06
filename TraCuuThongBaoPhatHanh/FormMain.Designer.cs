@@ -42,13 +42,13 @@
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.panelFooter = new System.Windows.Forms.Panel();
+            this.labelSerial = new System.Windows.Forms.Label();
+            this.checkBoxHeadless = new System.Windows.Forms.CheckBox();
+            this.textBoxSerial = new System.Windows.Forms.TextBox();
             this.textBoxTaxCode2 = new System.Windows.Forms.TextBox();
             this.buttonSubmit2 = new System.Windows.Forms.Button();
             this.labelTaxCode2 = new System.Windows.Forms.Label();
-            this.checkBoxHeadless = new System.Windows.Forms.CheckBox();
-            this.labelSerial = new System.Windows.Forms.Label();
-            this.textBoxSerial = new System.Windows.Forms.TextBox();
+            this.panelFooter = new System.Windows.Forms.Panel();
             this.tabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -212,15 +212,40 @@
             this.tabPage2.Text = "Tra cứu serial chứng thư";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // panelFooter
+            // labelSerial
             // 
-            this.panelFooter.Controls.Add(this.labelNote);
-            this.panelFooter.Controls.Add(this.labelVersion);
-            this.panelFooter.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelFooter.Location = new System.Drawing.Point(0, 209);
-            this.panelFooter.Name = "panelFooter";
-            this.panelFooter.Size = new System.Drawing.Size(529, 36);
-            this.panelFooter.TabIndex = 5;
+            this.labelSerial.AutoSize = true;
+            this.labelSerial.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelSerial.Location = new System.Drawing.Point(26, 86);
+            this.labelSerial.Name = "labelSerial";
+            this.labelSerial.Size = new System.Drawing.Size(43, 16);
+            this.labelSerial.TabIndex = 8;
+            this.labelSerial.Text = "Serial";
+            // 
+            // checkBoxHeadless
+            // 
+            this.checkBoxHeadless.AutoSize = true;
+            this.checkBoxHeadless.Checked = true;
+            this.checkBoxHeadless.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxHeadless.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkBoxHeadless.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.checkBoxHeadless.Location = new System.Drawing.Point(29, 140);
+            this.checkBoxHeadless.Name = "checkBoxHeadless";
+            this.checkBoxHeadless.Size = new System.Drawing.Size(126, 17);
+            this.checkBoxHeadless.TabIndex = 7;
+            this.checkBoxHeadless.Text = "Không mở trình duyệt";
+            this.checkBoxHeadless.UseVisualStyleBackColor = true;
+            // 
+            // textBoxSerial
+            // 
+            this.textBoxSerial.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.textBoxSerial.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxSerial.Location = new System.Drawing.Point(229, 83);
+            this.textBoxSerial.Name = "textBoxSerial";
+            this.textBoxSerial.ReadOnly = true;
+            this.textBoxSerial.Size = new System.Drawing.Size(266, 23);
+            this.textBoxSerial.TabIndex = 4;
+            this.textBoxSerial.Text = "Không hỗ trợ thuế điện tử";
             // 
             // textBoxTaxCode2
             // 
@@ -256,39 +281,15 @@
             this.labelTaxCode2.TabIndex = 6;
             this.labelTaxCode2.Text = "Mã số thuế";
             // 
-            // checkBoxHeadless
+            // panelFooter
             // 
-            this.checkBoxHeadless.AutoSize = true;
-            this.checkBoxHeadless.Checked = true;
-            this.checkBoxHeadless.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxHeadless.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBoxHeadless.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.checkBoxHeadless.Location = new System.Drawing.Point(29, 140);
-            this.checkBoxHeadless.Name = "checkBoxHeadless";
-            this.checkBoxHeadless.Size = new System.Drawing.Size(126, 17);
-            this.checkBoxHeadless.TabIndex = 7;
-            this.checkBoxHeadless.Text = "Không mở trình duyệt";
-            this.checkBoxHeadless.UseVisualStyleBackColor = true;
-            // 
-            // labelSerial
-            // 
-            this.labelSerial.AutoSize = true;
-            this.labelSerial.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelSerial.Location = new System.Drawing.Point(26, 86);
-            this.labelSerial.Name = "labelSerial";
-            this.labelSerial.Size = new System.Drawing.Size(43, 16);
-            this.labelSerial.TabIndex = 8;
-            this.labelSerial.Text = "Serial";
-            // 
-            // textBoxSerial
-            // 
-            this.textBoxSerial.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.textBoxSerial.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxSerial.Location = new System.Drawing.Point(229, 83);
-            this.textBoxSerial.Name = "textBoxSerial";
-            this.textBoxSerial.ReadOnly = true;
-            this.textBoxSerial.Size = new System.Drawing.Size(266, 23);
-            this.textBoxSerial.TabIndex = 4;
+            this.panelFooter.Controls.Add(this.labelNote);
+            this.panelFooter.Controls.Add(this.labelVersion);
+            this.panelFooter.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panelFooter.Location = new System.Drawing.Point(0, 209);
+            this.panelFooter.Name = "panelFooter";
+            this.panelFooter.Size = new System.Drawing.Size(529, 36);
+            this.panelFooter.TabIndex = 5;
             // 
             // FormMain
             // 
