@@ -22,6 +22,7 @@ namespace TraCuuThongBaoPhatHanh
         private IWebDriver _driver;
         private CancellationTokenSource _tokenSource = new CancellationTokenSource();
         private readonly string _mainUrl = ConfigurationManager.AppSettings["host"] ?? "http://tracuuhoadon.gdt.gov.vn/tbphtc.html";
+        private readonly string _alterUrl = ConfigurationManager.AppSettings["host2"] ?? "http://nopthue.gdt.gov.vn/";
         private static string _noteText;
         private static Color _noteTextColor;
         private readonly IBaseService _baseService;
@@ -43,10 +44,8 @@ namespace TraCuuThongBaoPhatHanh
             if (!_running)
             {
                 _running = true;
-                //var token = _tokenSource.Token;
-                //await Action(token);
                 var token = _tokenSource.Token;
-                await Task.Factory.StartNew(() => Action(token), token).ConfigureAwait(false);
+                await Task.Factory.StartNew(() => ActionNotice(token), token).ConfigureAwait(false);
             }
             else
             {
@@ -55,7 +54,7 @@ namespace TraCuuThongBaoPhatHanh
             }
         }
 
-        private async Task Action(CancellationToken ct)
+        private async Task ActionNotice(CancellationToken ct)
         {
             try
             {
@@ -72,6 +71,7 @@ namespace TraCuuThongBaoPhatHanh
                         textBoxTaxCode.Focus();
                         buttonSubmit.Text = "Tra cứu";
                     }));
+                    _running = false;
                     return;
                 }
 
@@ -88,20 +88,21 @@ namespace TraCuuThongBaoPhatHanh
                         textBoxTaxCode.Focus();
                         buttonSubmit.Text = "Tra cứu";
                     }));
+                    _running = false;
                     return;
                 }
 
                 try
                 {
                     if (_driver == null || !_driver.WindowHandles.Any())
-                        _driver = InitializeChrome();
+                        _driver = InitializeChrome(false);
                 }
                 catch
                 {
-                    _driver = InitializeChrome();
+                    _driver = InitializeChrome(false);
                 }
 
-                if (string.IsNullOrWhiteSpace(_driver.Url) || _driver.Url == "data:,")
+                if (_driver.Url != _mainUrl)
                 {
                     _driver.Navigate().GoToUrl(_mainUrl);
                 }
@@ -127,21 +128,25 @@ namespace TraCuuThongBaoPhatHanh
                         _driver.FindElement(By.ClassName("ui-icon-refresh")).Click();
 
                     CheckCancellation();
+                    var js = (IJavaScriptExecutor)_driver;
+
                     // tax code
-                    await TypeSlowMo(_driver, By.Id("tin"), textBoxTaxCode.Text, 2).ConfigureAwait(false);
+                    //await TypeSlowMo(_driver, By.Id("tin"), textBoxTaxCode.Text, 2).ConfigureAwait(false);
+                    SetElementText(js, "tin", textBoxTaxCode.Text);
 
                     CheckCancellation();
                     // date From
                     await TypeSlowMo(_driver, By.Id("ngayTu"), $" 01/01/{yearFrom}", 2).ConfigureAwait(false);
+                    //SetElementText(js, "ngayTu", $" 01/01/{yearFrom}");
 
                     CheckCancellation();
                     // date To
                     await TypeSlowMo(_driver, By.Id("ngayDen"), " " + new DateTime(yearTo + 1, 1, 1).AddDays(-1).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture), 2).ConfigureAwait(false);
+                    //SetElementText(js, "ngayDen", " " + new DateTime(yearTo + 1, 1, 1).AddDays(-1).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture));
 
                     CheckCancellation();
 
                     // solve captcha
-                    var js = (IJavaScriptExecutor)_driver;
                     var base64String = js.ExecuteScript(@"
                     var c = document.createElement('canvas');
                     var ctx = c.getContext('2d');
@@ -154,11 +159,6 @@ namespace TraCuuThongBaoPhatHanh
                     return base64String;
                     ") as string;
                     var base64 = base64String?.Split(',').Last();
-                    //using (var stream = new MemoryStream(Convert.FromBase64String(base64)))
-                    //using (var bitmap = new Bitmap(stream))
-                    //{
-                    //    bitmap.Save("Captcha.png", System.Drawing.Imaging.ImageFormat.Png);
-                    //}
                     var captchaFile = SaveBytesToFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Captcha.png"), Convert.FromBase64String(base64));
 
                     CheckCancellation();
@@ -168,7 +168,8 @@ namespace TraCuuThongBaoPhatHanh
                     if (!string.IsNullOrWhiteSpace(captcha))
                     {
                         CheckCancellation();
-                        await TypeSlowMo(_driver, By.Id("captchaCodeVerify"), captcha, 5).ConfigureAwait(false);
+                        //await TypeSlowMo(_driver, By.Id("captchaCodeVerify"), captcha, 5).ConfigureAwait(false);
+                        SetElementText(js, "captchaCodeVerify", captcha);
 
                         CheckCancellation();
                         // click submit
@@ -232,7 +233,7 @@ namespace TraCuuThongBaoPhatHanh
             // local functions
             void Invoke(Delegate method)
             {
-                panelMain?.Invoke(method);
+                tabControl.Invoke(method);
             }
 
             void CheckCancellation()
@@ -245,6 +246,193 @@ namespace TraCuuThongBaoPhatHanh
             }
         }
 
+        private async void ButtonSubmit2_Click(object sender, EventArgs e)
+        {
+            if (!_running)
+            {
+                _running = true;
+                var token = _tokenSource.Token;
+                await Task.Factory.StartNew(() => ActionSerial(token), token).ConfigureAwait(false);
+            }
+            else
+            {
+                _tokenSource.Cancel();
+                _tokenSource = new CancellationTokenSource();
+            }
+        }
+
+        private async Task ActionSerial(CancellationToken ct)
+        {
+            try
+            {
+                Invoke((MethodInvoker)(() =>
+                {
+                    buttonSubmit2.Text = "Huỷ tra cứu";
+                }));
+
+                if (string.IsNullOrWhiteSpace(textBoxTaxCode2.Text))
+                {
+                    Blink(labelNote, "Nhập hộ em cái mã số thuế", Color.Red);
+                    Invoke((MethodInvoker)(() =>
+                    {
+                        textBoxTaxCode2.Focus();
+                        buttonSubmit2.Text = "Tra cứu";
+                    }));
+                    _running = false;
+                    return;
+                }
+
+                Invoke((MethodInvoker)(() =>
+                {
+                    textBoxTaxCode2.Text = textBoxTaxCode2.Text.Replace(" ", "");
+                }));
+
+                if (!Regex.IsMatch(textBoxTaxCode2.Text, "^[0-9-]*$"))
+                {
+                    Blink(labelNote, "Mã số thuế thì chỉ có số thôi mợ ạ", Color.Red);
+                    Invoke((MethodInvoker)(() =>
+                    {
+                        textBoxTaxCode2.Focus();
+                        buttonSubmit2.Text = "Tra cứu";
+                    }));
+                    _running = false;
+                    return;
+                }
+
+                try
+                {
+                    if (_driver == null || !_driver.WindowHandles.Any() || !checkBoxHeadless.Checked)
+                        _driver = InitializeChrome(checkBoxHeadless.Checked);
+                }
+                catch
+                {
+                    _driver = InitializeChrome(checkBoxHeadless.Checked);
+                }
+
+                if (_driver.Url != _alterUrl)
+                {
+                    _driver.Navigate().GoToUrl(_alterUrl);
+                }
+                else
+                {
+                    _driver.Navigate().Refresh();
+                }
+
+                CheckCancellation();
+                var js = (IJavaScriptExecutor)_driver;
+
+                // click register
+                _driver.FindElement(By.CssSelector("img[alt='register']")).Click();
+
+                var nextDelay = TimeSpan.FromMilliseconds(300);
+                bool timeout = true;
+                // tax code
+                for (var i = 0; i < 3; i++)
+                {
+                    CheckCancellation();
+                    var taxCodeInput = _driver.FindElement(By.Id("tin"));
+                    if (taxCodeInput != null)
+                    {
+                        SetElementText(js, "tin", textBoxTaxCode2.Text);
+                        timeout = false;
+                        break;
+                    }
+                    await Task.Delay(nextDelay, ct).ConfigureAwait(false);
+                    nextDelay = nextDelay + nextDelay;
+                    CheckCancellation();
+                }
+
+                if (timeout)
+                {
+                    MessageBox.Show($"Máy chủ phản hồi quá lâu", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+                else
+                {
+                    timeout = true;
+                }
+
+                // click continue
+                _driver.FindElement(By.CssSelector("input[class='btn_type1']")).Click();
+
+                // get serial
+                nextDelay = TimeSpan.FromMilliseconds(300);
+                for (var i = 0; i < 3; i++)
+                {
+                    CheckCancellation();
+                    var serial = _driver.FindElement(By.Id("serial"));
+                    if (serial != null)
+                    {
+                        Invoke((MethodInvoker)(() =>
+                        {
+                            textBoxSerial.Text = serial.GetAttribute("value").Replace(" ","");
+                            textBoxSerial.Focus();
+                        }));
+                        timeout = false;
+                        break;
+                    }
+                    await Task.Delay(nextDelay, ct).ConfigureAwait(false);
+                    nextDelay = nextDelay + nextDelay;
+                    CheckCancellation();
+                }
+                if (timeout)
+                {
+                    MessageBox.Show($"Máy chủ phản hồi quá lâu", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+
+                Invoke((MethodInvoker)(() =>
+                {
+                    buttonSubmit2.Text = "Tra cứu";
+                }));
+            }
+            catch (Exception ex)
+            {
+                Invoke((MethodInvoker)(() =>
+                {
+                    buttonSubmit2.Text = "Tra cứu";
+                }));
+                if (ex is OperationCanceledException)
+                {
+                    _tokenSource = new CancellationTokenSource();
+                    return;
+                }
+
+                MessageBox.Show($"Có lỗi xảy ra: {ex.Message}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            _running = false;
+
+            // local functions
+            void Invoke(Delegate method)
+            {
+                tabControl.Invoke(method);
+            }
+
+            void CheckCancellation()
+            {
+                if (ct.IsCancellationRequested)
+                {
+                    _running = false;
+                    ct.ThrowIfCancellationRequested();
+                }
+            }
+        }
+
+        private async Task RetryAsync(Action action, bool breaker)
+        {
+            // Retry after 1 second, then after 2 seconds, then 4 if query returns null invoice by key
+            var nextDelay = TimeSpan.FromSeconds(1);
+            for (var i = 0; i < 3; i++)
+            {
+                //package = await RepoService.GetPackageByBrokerElement(Config, element, connectionString, table);
+                //if (!(package?.Exception is InvoiceNotFoundException))
+                //{
+                //    break;
+                //}
+
+                await Task.Delay(nextDelay);
+                nextDelay = nextDelay + nextDelay;
+            }
+        }
+
         private static async Task TypeSlowMo(IWebDriver driver, By by, string value, int milliseconds = 10)
         {
             var element = driver.FindElement(by);
@@ -254,6 +442,11 @@ namespace TraCuuThongBaoPhatHanh
                 await Task.Delay(milliseconds).ConfigureAwait(false);
                 element.SendKeys(character.ToString());
             }
+        }
+
+        private static void SetElementText(IJavaScriptExecutor js, string inputId, string inputValue)
+        {
+            js.ExecuteScript($"document.getElementById('{inputId}').setAttribute('value', '{inputValue}');");
         }
 
         public static Bitmap ScreenShotElement(IWebDriver driver, By by)
@@ -279,18 +472,20 @@ namespace TraCuuThongBaoPhatHanh
             }
         }
 
-        private static ChromeDriver InitializeChrome()
+        private static ChromeDriver InitializeChrome(bool headless = true)
         {
             var chromeDriverService = ChromeDriverService.CreateDefaultService();
             chromeDriverService.HideCommandPromptWindow = true;
             var option = new ChromeOptions();
+            if (headless)
+                option.AddArguments("--headless");
             //option.AddArguments("--headless", "--no-sandbox", "--disable-web-security", "--disable-gpu", "--incognito", "--proxy-bypass-list=*", "--proxy-server='direct://'", "--log-level=3", "--hide-scrollbars");
             return new ChromeDriver(chromeDriverService, option);
         }
 
         private async void Blink(Label label, string text, Color color)
         {
-            panelMain?.Invoke((MethodInvoker)(() => label.Text = text));
+            tabControl.Invoke((MethodInvoker)(() => label.Text = text));
             int i = 1;
             while (i <= 10)
             {
@@ -306,7 +501,7 @@ namespace TraCuuThongBaoPhatHanh
                 }
                 ++i;
             }
-            panelMain?.Invoke((MethodInvoker)(() =>
+            tabControl.Invoke((MethodInvoker)(() =>
             {
                 label.Text = _noteText;
                 label.ForeColor = _noteTextColor;
