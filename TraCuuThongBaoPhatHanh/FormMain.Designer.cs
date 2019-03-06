@@ -64,7 +64,7 @@
             this.buttonSubmit.Location = new System.Drawing.Point(229, 134);
             this.buttonSubmit.Name = "buttonSubmit";
             this.buttonSubmit.Size = new System.Drawing.Size(266, 27);
-            this.buttonSubmit.TabIndex = 3;
+            this.buttonSubmit.TabIndex = 4;
             this.buttonSubmit.Text = "Tra cứu";
             this.buttonSubmit.UseVisualStyleBackColor = false;
             this.buttonSubmit.Click += new System.EventHandler(this.ButtonSubmit_Click);
@@ -101,7 +101,7 @@
             this.checkBoxAutoOpenLatest.Location = new System.Drawing.Point(29, 140);
             this.checkBoxAutoOpenLatest.Name = "checkBoxAutoOpenLatest";
             this.checkBoxAutoOpenLatest.Size = new System.Drawing.Size(178, 17);
-            this.checkBoxAutoOpenLatest.TabIndex = 2;
+            this.checkBoxAutoOpenLatest.TabIndex = 3;
             this.checkBoxAutoOpenLatest.Text = "Tự động mở thông báo mới nhất";
             this.checkBoxAutoOpenLatest.UseVisualStyleBackColor = true;
             // 
@@ -177,6 +177,7 @@
             this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(529, 220);
             this.tabControl.TabIndex = 4;
+            this.tabControl.SelectedIndexChanged += new System.EventHandler(this.TabControl_SelectedIndexChanged);
             // 
             // tabPage1
             // 
@@ -232,7 +233,7 @@
             this.checkBoxHeadless.Location = new System.Drawing.Point(29, 140);
             this.checkBoxHeadless.Name = "checkBoxHeadless";
             this.checkBoxHeadless.Size = new System.Drawing.Size(126, 17);
-            this.checkBoxHeadless.TabIndex = 7;
+            this.checkBoxHeadless.TabIndex = 1;
             this.checkBoxHeadless.Text = "Không mở trình duyệt";
             this.checkBoxHeadless.UseVisualStyleBackColor = true;
             // 
@@ -254,7 +255,7 @@
             this.textBoxTaxCode2.Location = new System.Drawing.Point(229, 27);
             this.textBoxTaxCode2.Name = "textBoxTaxCode2";
             this.textBoxTaxCode2.Size = new System.Drawing.Size(266, 23);
-            this.textBoxTaxCode2.TabIndex = 4;
+            this.textBoxTaxCode2.TabIndex = 0;
             this.textBoxTaxCode2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextBoxTaxCode_KeyDown);
             // 
             // buttonSubmit2
@@ -266,7 +267,7 @@
             this.buttonSubmit2.Location = new System.Drawing.Point(229, 134);
             this.buttonSubmit2.Name = "buttonSubmit2";
             this.buttonSubmit2.Size = new System.Drawing.Size(266, 27);
-            this.buttonSubmit2.TabIndex = 5;
+            this.buttonSubmit2.TabIndex = 2;
             this.buttonSubmit2.Text = "Tra cứu";
             this.buttonSubmit2.UseVisualStyleBackColor = false;
             this.buttonSubmit2.Click += new System.EventHandler(this.ButtonSubmit2_Click);

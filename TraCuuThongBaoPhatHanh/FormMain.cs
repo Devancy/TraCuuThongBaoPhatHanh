@@ -28,6 +28,7 @@ namespace TraCuuThongBaoPhatHanh
         private readonly IBaseService _baseService;
         private readonly int[] _years = new[] { DateTime.Today.Year, DateTime.Today.Year - 1, DateTime.Today.Year - 2 };
         private volatile bool _running = false;
+        private volatile bool _headless = false;
         public FormMain()
         {
             InitializeComponent();
@@ -94,7 +95,7 @@ namespace TraCuuThongBaoPhatHanh
 
                 try
                 {
-                    if (_driver == null || !_driver.WindowHandles.Any())
+                    if (_driver == null || !_driver.WindowHandles.Any() || _headless)
                         _driver = InitializeChrome(false);
                 }
                 catch
@@ -302,7 +303,14 @@ namespace TraCuuThongBaoPhatHanh
                 try
                 {
                     if (_driver == null || !_driver.WindowHandles.Any() || !checkBoxHeadless.Checked)
+                    {
                         _driver = InitializeChrome(checkBoxHeadless.Checked);
+                    }
+                    else
+                    {
+                        _driver.Close();
+                        _driver = InitializeChrome(checkBoxHeadless.Checked);
+                    }
                 }
                 catch
                 {
@@ -472,14 +480,22 @@ namespace TraCuuThongBaoPhatHanh
             }
         }
 
-        private static ChromeDriver InitializeChrome(bool headless = true)
+        private ChromeDriver InitializeChrome(bool headless = true)
         {
             var chromeDriverService = ChromeDriverService.CreateDefaultService();
             chromeDriverService.HideCommandPromptWindow = true;
             var option = new ChromeOptions();
             if (headless)
+            {
+                //option.AddArguments("--headless", "--no-sandbox", "--disable-web-security", "--disable-gpu", "--incognito", "--proxy-bypass-list=*", "--proxy-server='direct://'", "--log-level=3", "--hide-scrollbars");
                 option.AddArguments("--headless");
-            //option.AddArguments("--headless", "--no-sandbox", "--disable-web-security", "--disable-gpu", "--incognito", "--proxy-bypass-list=*", "--proxy-server='direct://'", "--log-level=3", "--hide-scrollbars");
+                _headless = true;
+            }
+            else
+            {
+                _headless = false;
+            }
+            
             return new ChromeDriver(chromeDriverService, option);
         }
 
@@ -626,6 +642,24 @@ namespace TraCuuThongBaoPhatHanh
             Text = @"Closing application...";
             //Thread.Sleep(5000);
             Application.Exit();
+        }
+
+        private void TabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabControl.SelectedIndex == 0)
+            {
+                if (string.IsNullOrWhiteSpace(textBoxTaxCode.Text) && Regex.IsMatch(textBoxTaxCode2.Text, "^[0-9-]*$"))
+                {
+                    textBoxTaxCode.Text = textBoxTaxCode2.Text;
+                }
+            }
+            else if (tabControl.SelectedIndex == 1)
+            {
+                if (string.IsNullOrWhiteSpace(textBoxTaxCode2.Text) && Regex.IsMatch(textBoxTaxCode.Text, "^[0-9-]*$"))
+                {
+                    textBoxTaxCode2.Text = textBoxTaxCode.Text;
+                }
+            }
         }
     }
 }
