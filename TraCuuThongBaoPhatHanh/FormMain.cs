@@ -176,6 +176,7 @@ namespace TraCuuThongBaoPhatHanh
                         // click submit
                         _driver.FindElement(By.XPath("//*[@id=\"searchBtn\"]/span[2]")).Click();
 
+                        await Task.Delay(500, ct);
                         var err = _driver.FindElement(By.Id("lbLoiCode"));
                         if (err.Displayed || !string.IsNullOrWhiteSpace(err.Text))
                         {
@@ -224,6 +225,7 @@ namespace TraCuuThongBaoPhatHanh
                 if (ex is OperationCanceledException)
                 {
                     _tokenSource = new CancellationTokenSource();
+                    _running = false;
                     return;
                 }
 
@@ -401,6 +403,7 @@ namespace TraCuuThongBaoPhatHanh
                 if (ex is OperationCanceledException)
                 {
                     _tokenSource = new CancellationTokenSource();
+                    _running = false;
                     return;
                 }
 
