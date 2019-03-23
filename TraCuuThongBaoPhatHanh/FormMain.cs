@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AutoUpdaterDotNET;
+using Microsoft.Win32;
 using OpenQA.Selenium.Firefox;
 using TraCuuThongBaoPhatHanh.Service;
 
@@ -30,6 +31,7 @@ namespace TraCuuThongBaoPhatHanh
         private readonly int[] _years = new[] { DateTime.Today.Year, DateTime.Today.Year - 1, DateTime.Today.Year - 2 };
         private volatile bool _running = false;
         private volatile bool _headless = false;
+        private int _installedBrowser = 0;
         public FormMain()
         {
             InitializeComponent();
@@ -39,6 +41,14 @@ namespace TraCuuThongBaoPhatHanh
             comboBoxYearFrom.DataSource = _years;
             comboBoxYearTo.DataSource = _years;
             labelVersion.Text = $"v.{new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version}";
+
+            var path = Registry.GetValue(@"HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe", "", null);
+            if (path != null)
+                _installedBrowser += 1;
+
+            path = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\firefox.exe", "", null);
+            if (path != null)
+                _installedBrowser += 2;
         }
 
         private async void ButtonSubmit_Click(object sender, EventArgs e)
@@ -133,17 +143,17 @@ namespace TraCuuThongBaoPhatHanh
                     var js = (IJavaScriptExecutor)_driver;
 
                     // tax code
-                    //await TypeSlowMo(_driver, By.Id("tin"), textBoxTaxCode.Text, 2).ConfigureAwait(false);
-                    SetElementText(js, "tin", textBoxTaxCode.Text);
+                    await TypeSlowMo(_driver, By.Id("tin"), textBoxTaxCode.Text, 2).ConfigureAwait(false);
+                    //SetElementText(js, "tin", textBoxTaxCode.Text);
 
                     CheckCancellation();
                     // date From
-                    await TypeSlowMo(_driver, By.Id("ngayTu"), $" 01/01/{yearFrom}", 200).ConfigureAwait(false);
+                    await TypeSlowMo(_driver, By.Id("ngayTu"), $" 01/01/{yearFrom}", 50).ConfigureAwait(false);
                     //SetElementText(js, "ngayTu", $" 01/01/{yearFrom}");
 
                     CheckCancellation();
                     // date To
-                    await TypeSlowMo(_driver, By.Id("ngayDen"), " " + new DateTime(yearTo + 1, 1, 1).AddDays(-1).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture), 200).ConfigureAwait(false);
+                    await TypeSlowMo(_driver, By.Id("ngayDen"), " " + new DateTime(yearTo + 1, 1, 1).AddDays(-1).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture), 50).ConfigureAwait(false);
                     //SetElementText(js, "ngayDen", " " + new DateTime(yearTo + 1, 1, 1).AddDays(-1).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture));
 
                     CheckCancellation();
@@ -170,8 +180,8 @@ namespace TraCuuThongBaoPhatHanh
                     if (!string.IsNullOrWhiteSpace(captcha))
                     {
                         CheckCancellation();
-                        //await TypeSlowMo(_driver, By.Id("captchaCodeVerify"), captcha, 5).ConfigureAwait(false);
-                        SetElementText(js, "captchaCodeVerify", captcha);
+                        await TypeSlowMo(_driver, By.Id("captchaCodeVerify"), captcha, 5).ConfigureAwait(false);
+                        //SetElementText(js, "captchaCodeVerify", captcha);
 
                         CheckCancellation();
                         // click submit
@@ -484,11 +494,11 @@ namespace TraCuuThongBaoPhatHanh
             }
         }
 
-        private IWebDriver InitializeWebDriver(bool headless = true, bool firefox = true)
+        private IWebDriver InitializeWebDriver(bool headless = true)
         {
-            if (firefox)
-                return InitializeFireFox(headless);
-            return InitializeChrome(headless);
+            if (_installedBrowser != 2)
+                return InitializeChrome(headless); // default browser
+            return InitializeFireFox(headless);
         }
 
         private ChromeDriver InitializeChrome(bool headless = true)
@@ -572,7 +582,15 @@ namespace TraCuuThongBaoPhatHanh
         {
             if (e.KeyCode == System.Windows.Forms.Keys.Enter)
             {
-                ButtonSubmit_Click(this, new EventArgs());
+                if (tabControl.SelectedIndex == 0)
+                {
+                    ButtonSubmit_Click(this, new EventArgs());
+                }
+                else if (tabControl.SelectedIndex == 1)
+                {
+                    ButtonSubmit2_Click(this, new EventArgs());
+                }
+                
             }
         }
 
