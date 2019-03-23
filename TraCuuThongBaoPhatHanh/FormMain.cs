@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AutoUpdaterDotNET;
+using OpenQA.Selenium.Firefox;
 using TraCuuThongBaoPhatHanh.Service;
 
 namespace TraCuuThongBaoPhatHanh
@@ -96,11 +97,11 @@ namespace TraCuuThongBaoPhatHanh
                 try
                 {
                     if (_driver == null || !_driver.WindowHandles.Any() || _headless)
-                        _driver = InitializeChrome(false);
+                        _driver = InitializeWebDriver(false);
                 }
                 catch
                 {
-                    _driver = InitializeChrome(false);
+                    _driver = InitializeWebDriver(false);
                 }
 
                 if (_driver.Url != _mainUrl)
@@ -137,12 +138,12 @@ namespace TraCuuThongBaoPhatHanh
 
                     CheckCancellation();
                     // date From
-                    await TypeSlowMo(_driver, By.Id("ngayTu"), $" 01/01/{yearFrom}", 2).ConfigureAwait(false);
+                    await TypeSlowMo(_driver, By.Id("ngayTu"), $" 01/01/{yearFrom}", 200).ConfigureAwait(false);
                     //SetElementText(js, "ngayTu", $" 01/01/{yearFrom}");
 
                     CheckCancellation();
                     // date To
-                    await TypeSlowMo(_driver, By.Id("ngayDen"), " " + new DateTime(yearTo + 1, 1, 1).AddDays(-1).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture), 2).ConfigureAwait(false);
+                    await TypeSlowMo(_driver, By.Id("ngayDen"), " " + new DateTime(yearTo + 1, 1, 1).AddDays(-1).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture), 200).ConfigureAwait(false);
                     //SetElementText(js, "ngayDen", " " + new DateTime(yearTo + 1, 1, 1).AddDays(-1).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture));
 
                     CheckCancellation();
@@ -306,17 +307,17 @@ namespace TraCuuThongBaoPhatHanh
                 {
                     if (_driver == null || !_driver.WindowHandles.Any() || !checkBoxHeadless.Checked)
                     {
-                        _driver = InitializeChrome(checkBoxHeadless.Checked);
+                        _driver = InitializeWebDriver(checkBoxHeadless.Checked);
                     }
                     else
                     {
                         _driver.Close();
-                        _driver = InitializeChrome(checkBoxHeadless.Checked);
+                        _driver = InitializeWebDriver(checkBoxHeadless.Checked);
                     }
                 }
                 catch
                 {
-                    _driver = InitializeChrome(checkBoxHeadless.Checked);
+                    _driver = InitializeWebDriver(checkBoxHeadless.Checked);
                 }
 
                 if (_driver.Url != _alterUrl)
@@ -483,6 +484,13 @@ namespace TraCuuThongBaoPhatHanh
             }
         }
 
+        private IWebDriver InitializeWebDriver(bool headless = true, bool firefox = true)
+        {
+            if (firefox)
+                return InitializeFireFox(headless);
+            return InitializeChrome(headless);
+        }
+
         private ChromeDriver InitializeChrome(bool headless = true)
         {
             var chromeDriverService = ChromeDriverService.CreateDefaultService();
@@ -498,8 +506,29 @@ namespace TraCuuThongBaoPhatHanh
             {
                 _headless = false;
             }
-            
+            //option.AddArguments("--incognito", "--disable-web-security");
+
             return new ChromeDriver(chromeDriverService, option);
+        }
+
+        private FirefoxDriver InitializeFireFox(bool headless = true)
+        {
+            var driverService = FirefoxDriverService.CreateDefaultService();
+            driverService.HideCommandPromptWindow = true;
+            var option = new FirefoxOptions();
+            if (headless)
+            {
+                //option.AddArguments("--headless", "--no-sandbox", "--disable-web-security", "--disable-gpu", "--incognito", "--proxy-bypass-list=*", "--proxy-server='direct://'", "--log-level=3", "--hide-scrollbars");
+                option.AddArguments("--headless");
+                _headless = true;
+            }
+            else
+            {
+                _headless = false;
+            }
+            //option.AddArguments("--incognito");
+
+            return new FirefoxDriver(driverService, option);
         }
 
         private async void Blink(Label label, string text, Color color)
