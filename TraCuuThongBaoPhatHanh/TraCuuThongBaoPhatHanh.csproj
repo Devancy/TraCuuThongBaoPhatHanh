@@ -94,6 +94,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Deploy\API.json" />
+    <None Include="Deploy\Release.zip" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
