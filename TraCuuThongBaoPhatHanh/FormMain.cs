@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using AutoUpdaterDotNET;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
 using System.Configuration;
@@ -12,9 +13,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AutoUpdaterDotNET;
-using Microsoft.Win32;
-using OpenQA.Selenium.Firefox;
 using TraCuuThongBaoPhatHanh.Service;
 
 namespace TraCuuThongBaoPhatHanh
@@ -31,7 +29,6 @@ namespace TraCuuThongBaoPhatHanh
         private readonly int[] _years = new[] { DateTime.Today.Year, DateTime.Today.Year - 1, DateTime.Today.Year - 2 };
         private volatile bool _running = false;
         private volatile bool _headless = false;
-        private int _installedBrowser = 0;
         public FormMain()
         {
             InitializeComponent();
@@ -41,14 +38,6 @@ namespace TraCuuThongBaoPhatHanh
             comboBoxYearFrom.DataSource = _years;
             comboBoxYearTo.DataSource = _years;
             labelVersion.Text = $"v.{new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version}";
-
-            var path = Registry.GetValue(@"HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe", "", null);
-            if (path != null)
-                _installedBrowser += 1;
-
-            path = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\firefox.exe", "", null);
-            if (path != null)
-                _installedBrowser += 2;
         }
 
         private async void ButtonSubmit_Click(object sender, EventArgs e)
@@ -385,7 +374,7 @@ namespace TraCuuThongBaoPhatHanh
                     {
                         Invoke((MethodInvoker)(() =>
                         {
-                            textBoxSerial.Text = serial.GetAttribute("value").Replace(" ","");
+                            textBoxSerial.Text = serial.GetAttribute("value").Replace(" ", "");
                             textBoxSerial.Focus();
                         }));
                         timeout = false;
@@ -496,9 +485,7 @@ namespace TraCuuThongBaoPhatHanh
 
         private IWebDriver InitializeWebDriver(bool headless = true)
         {
-            if (_installedBrowser != 2)
-                return InitializeChrome(headless); // default browser
-            return InitializeFireFox(headless);
+            return InitializeChrome(headless); // default browser
         }
 
         private ChromeDriver InitializeChrome(bool headless = true)
@@ -519,26 +506,6 @@ namespace TraCuuThongBaoPhatHanh
             //option.AddArguments("--incognito", "--disable-web-security");
 
             return new ChromeDriver(chromeDriverService, option);
-        }
-
-        private FirefoxDriver InitializeFireFox(bool headless = true)
-        {
-            var driverService = FirefoxDriverService.CreateDefaultService();
-            driverService.HideCommandPromptWindow = true;
-            var option = new FirefoxOptions();
-            if (headless)
-            {
-                //option.AddArguments("--headless", "--no-sandbox", "--disable-web-security", "--disable-gpu", "--incognito", "--proxy-bypass-list=*", "--proxy-server='direct://'", "--log-level=3", "--hide-scrollbars");
-                option.AddArguments("--headless");
-                _headless = true;
-            }
-            else
-            {
-                _headless = false;
-            }
-            //option.AddArguments("--incognito");
-
-            return new FirefoxDriver(driverService, option);
         }
 
         private async void Blink(Label label, string text, Color color)
@@ -568,8 +535,8 @@ namespace TraCuuThongBaoPhatHanh
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            this.Hide();
-            this.ShowInTaskbar = false;
+            Hide();
+            ShowInTaskbar = false;
             _driver?.Quit();
             foreach (var process in Process.GetProcessesByName("chromedriver"))
             {
@@ -590,7 +557,7 @@ namespace TraCuuThongBaoPhatHanh
                 {
                     ButtonSubmit2_Click(this, new EventArgs());
                 }
-                
+
             }
         }
 
@@ -598,7 +565,7 @@ namespace TraCuuThongBaoPhatHanh
         {
             var selectedFrom = int.Parse(comboBoxYearFrom.SelectedValue.ToString());
             var rest = _years.Where(_ => _ <= int.Parse(comboBoxYearTo.SelectedValue.ToString())).ToArray();
-            comboBoxYearFrom.DataSource = rest.ToArray();
+            comboBoxYearFrom.DataSource = rest;
             if (rest.Contains(selectedFrom))
             {
                 comboBoxYearFrom.SelectedIndex = Array.IndexOf(rest, selectedFrom);
@@ -624,11 +591,11 @@ namespace TraCuuThongBaoPhatHanh
             var desiredFileFullName = ServiceHelper.GetDesiredFileFullPath(directory, fileFullPath);
             // Create a FileStream object to write a stream to a file
             using (Stream stream = new MemoryStream(bytes))
-            using (var fileStream = new FileStream(fileFullPath, FileMode.Create, FileAccess.ReadWrite, FileShare.Read, (int)stream.Length))
+            using (var fileStream = new FileStream(desiredFileFullName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read, (int)stream.Length))
             {
                 // Fill the bytes[] array with the stream data
                 byte[] bytesInStream = new byte[stream.Length];
-                stream.Read(bytesInStream, 0, (int)bytesInStream.Length);
+                stream.Read(bytesInStream, 0, bytesInStream.Length);
 
                 // Use FileStream object to write to the specified file
                 fileStream.Write(bytesInStream, 0, bytesInStream.Length);
