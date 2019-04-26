@@ -135,15 +135,23 @@ namespace TraCuuThongBaoPhatHanh
                     await TypeSlowMo(_driver, By.Id("tin"), textBoxTaxCode.Text, 2).ConfigureAwait(false);
                     //SetElementText(js, "tin", textBoxTaxCode.Text);
 
-                    CheckCancellation();
                     // date From
-                    await TypeSlowMo(_driver, By.Id("ngayTu"), $" 01/01/{yearFrom}", 50).ConfigureAwait(false);
-                    //SetElementText(js, "ngayTu", $" 01/01/{yearFrom}");
+                    var dateFrom = $" 01/01/{yearFrom}";
+                    while (_driver.FindElement(By.Id("ngayTu")).GetAttribute("value") != dateFrom.Trim())
+                    {
+                        CheckCancellation();
+                        await TypeSlowMo(_driver, By.Id("ngayTu"), dateFrom, 50).ConfigureAwait(false);
+                        //SetElementText(js, "ngayTu", $" 01/01/{yearFrom}"); 
+                    }
 
-                    CheckCancellation();
                     // date To
-                    await TypeSlowMo(_driver, By.Id("ngayDen"), " " + new DateTime(yearTo + 1, 1, 1).AddDays(-1).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture), 50).ConfigureAwait(false);
-                    //SetElementText(js, "ngayDen", " " + new DateTime(yearTo + 1, 1, 1).AddDays(-1).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture));
+                    var dateTo = new DateTime(yearTo + 1, 1, 1).AddDays(-1).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    while (_driver.FindElement(By.Id("ngayDen")).GetAttribute("value") != dateTo.Trim())
+                    {
+                        CheckCancellation();
+                        await TypeSlowMo(_driver, By.Id("ngayDen"), " " + dateTo, 50).ConfigureAwait(false);
+                        //SetElementText(js, "ngayDen", " " + new DateTime(yearTo + 1, 1, 1).AddDays(-1).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)); 
+                    }
 
                     CheckCancellation();
 
