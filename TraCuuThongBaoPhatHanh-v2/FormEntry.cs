@@ -38,7 +38,7 @@ namespace TraCuuThongBaoPhatHanh_v2
         {
             Program.CheckForUpdate();
 
-            dateTimePickerFrom.Value = DateTime.Today.AddYears(-20);
+            dateTimePickerFrom.Value = DateTime.Today.AddYears(-10);
             dateTimePickerTo.Value = DateTime.Today;
             var token = _tokenSource.Token;
             await Task.Factory.StartNew(() => GetCaptcha(sender, e, token), token).ConfigureAwait(false);
@@ -65,8 +65,6 @@ namespace TraCuuThongBaoPhatHanh_v2
 
         private ChromeDriver InitializeChrome(bool headless = true)
         {
-            ShowProgress("Đang khởi tạo dịch vụ, vui lòng chờ");
-
             var chromeDriverService = ChromeDriverService.CreateDefaultService();
             chromeDriverService.HideCommandPromptWindow = true;
             var option = new ChromeOptions();
@@ -219,6 +217,7 @@ namespace TraCuuThongBaoPhatHanh_v2
         {
             Task.Run(() =>
             {
+                ShowProgress("Đang khởi tạo dịch vụ, vui lòng chờ");
                 string captcha = string.Empty;
                 try
                 {
@@ -327,6 +326,7 @@ namespace TraCuuThongBaoPhatHanh_v2
         private void ButtonClearSourcePath_Click(object sender, EventArgs e)
         {
             labelSourcePath.Text = null;
+            buttonClearSourcePath.Visible = false;
         }
 
         //--------------------------------

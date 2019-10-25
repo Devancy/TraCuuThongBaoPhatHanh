@@ -279,13 +279,13 @@
             // 
             this.panelMid.Controls.Add(this.labelStep4);
             this.panelMid.Controls.Add(this.labelStep3);
-            this.panelMid.Controls.Add(this.pictureBoxLoading);
             this.panelMid.Controls.Add(this.labelInfo);
             this.panelMid.Controls.Add(this.buttonF5);
             this.panelMid.Controls.Add(this.buttonExecute);
             this.panelMid.Controls.Add(this.pictureBoxCaptcha);
             this.panelMid.Controls.Add(this.textBoxCaptcha);
             this.panelMid.Controls.Add(this.label3);
+            this.panelMid.Controls.Add(this.pictureBoxLoading);
             this.panelMid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelMid.Location = new System.Drawing.Point(5, 237);
             this.panelMid.Name = "panelMid";
