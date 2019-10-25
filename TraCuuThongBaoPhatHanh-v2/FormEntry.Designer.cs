@@ -49,25 +49,25 @@
             this.panelMid = new System.Windows.Forms.Panel();
             this.labelStep4 = new System.Windows.Forms.Label();
             this.labelStep3 = new System.Windows.Forms.Label();
-            this.pictureBoxLoading = new System.Windows.Forms.PictureBox();
             this.labelInfo = new System.Windows.Forms.Label();
             this.buttonF5 = new System.Windows.Forms.Button();
             this.buttonExecute = new System.Windows.Forms.Button();
             this.pictureBoxCaptcha = new System.Windows.Forms.PictureBox();
             this.textBoxCaptcha = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.pictureBoxLoading = new System.Windows.Forms.PictureBox();
             this.panelBottom = new System.Windows.Forms.Panel();
-            this.labelUrl = new System.Windows.Forms.LinkLabel();
             this.labelContact = new System.Windows.Forms.Label();
             this.textBoxTaxCodeList = new System.Windows.Forms.TextBox();
+            this.linkLabelExportExcel = new System.Windows.Forms.LinkLabel();
             this.tableLayoutPanel.SuspendLayout();
             this.panelMain.SuspendLayout();
             this.tableLayoutPanelInner.SuspendLayout();
             this.panelTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
             this.panelMid.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLoading)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCaptcha)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLoading)).BeginInit();
             this.panelBottom.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -312,17 +312,6 @@
             this.labelStep3.TabIndex = 34;
             this.labelStep3.Text = "3.";
             // 
-            // pictureBoxLoading
-            // 
-            this.pictureBoxLoading.Image = global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.cat;
-            this.pictureBoxLoading.Location = new System.Drawing.Point(192, 28);
-            this.pictureBoxLoading.Name = "pictureBoxLoading";
-            this.pictureBoxLoading.Size = new System.Drawing.Size(111, 94);
-            this.pictureBoxLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxLoading.TabIndex = 35;
-            this.pictureBoxLoading.TabStop = false;
-            this.pictureBoxLoading.Visible = false;
-            // 
             // labelInfo
             // 
             this.labelInfo.AutoSize = true;
@@ -383,26 +372,26 @@
             this.label3.TabIndex = 29;
             this.label3.Text = "Nhập captcha từ hình bên";
             // 
+            // pictureBoxLoading
+            // 
+            this.pictureBoxLoading.Image = global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.cat;
+            this.pictureBoxLoading.Location = new System.Drawing.Point(192, 28);
+            this.pictureBoxLoading.Name = "pictureBoxLoading";
+            this.pictureBoxLoading.Size = new System.Drawing.Size(111, 94);
+            this.pictureBoxLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxLoading.TabIndex = 35;
+            this.pictureBoxLoading.TabStop = false;
+            this.pictureBoxLoading.Visible = false;
+            // 
             // panelBottom
             // 
-            this.panelBottom.Controls.Add(this.labelUrl);
+            this.panelBottom.Controls.Add(this.linkLabelExportExcel);
             this.panelBottom.Controls.Add(this.labelContact);
             this.panelBottom.Location = new System.Drawing.Point(11, 400);
             this.panelBottom.Margin = new System.Windows.Forms.Padding(10);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(695, 31);
             this.panelBottom.TabIndex = 2;
-            // 
-            // labelUrl
-            // 
-            this.labelUrl.AutoSize = true;
-            this.labelUrl.Location = new System.Drawing.Point(43, 9);
-            this.labelUrl.Name = "labelUrl";
-            this.labelUrl.Size = new System.Drawing.Size(109, 13);
-            this.labelUrl.TabIndex = 1;
-            this.labelUrl.TabStop = true;
-            this.labelUrl.Text = "http://easyinvoice.vn";
-            this.labelUrl.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LabelUrl_LinkClicked);
             // 
             // labelContact
             // 
@@ -429,6 +418,17 @@
             this.textBoxTaxCodeList.Size = new System.Drawing.Size(144, 442);
             this.textBoxTaxCodeList.TabIndex = 1;
             // 
+            // linkLabelExportExcel
+            // 
+            this.linkLabelExportExcel.AutoSize = true;
+            this.linkLabelExportExcel.Location = new System.Drawing.Point(61, 9);
+            this.linkLabelExportExcel.Name = "linkLabelExportExcel";
+            this.linkLabelExportExcel.Size = new System.Drawing.Size(58, 13);
+            this.linkLabelExportExcel.TabIndex = 1;
+            this.linkLabelExportExcel.TabStop = true;
+            this.linkLabelExportExcel.Text = "Xuất Excel";
+            this.linkLabelExportExcel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabelExportExcel_LinkClicked);
+            // 
             // FormEntry
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -452,8 +452,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).EndInit();
             this.panelMid.ResumeLayout(false);
             this.panelMid.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLoading)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCaptcha)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLoading)).EndInit();
             this.panelBottom.ResumeLayout(false);
             this.panelBottom.PerformLayout();
             this.ResumeLayout(false);
@@ -489,9 +489,9 @@
         private System.Windows.Forms.Label labelStep1;
         private System.Windows.Forms.Label labelStep4;
         private System.Windows.Forms.Label labelStep3;
-        private System.Windows.Forms.LinkLabel labelUrl;
         private System.Windows.Forms.Button buttonClearSourcePath;
         private System.Windows.Forms.PictureBox pictureBoxLogo;
+        private System.Windows.Forms.LinkLabel linkLabelExportExcel;
     }
 }
 

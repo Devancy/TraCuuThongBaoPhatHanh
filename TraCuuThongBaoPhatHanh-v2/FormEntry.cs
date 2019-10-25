@@ -5,6 +5,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
@@ -12,9 +13,11 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace TraCuuThongBaoPhatHanh_v2
 {
@@ -28,6 +31,10 @@ namespace TraCuuThongBaoPhatHanh_v2
         private string _token = string.Empty;
         private CookieCollection _cookies;
         private long _tokenName;
+
+        private bool _autoCaptcha = ConfigurationManager.AppSettings["auto-captcha"] == "1";
+        private List<TINResponse> _data;
+        private string _output = null;
 
         public FormEntry()
         {
@@ -155,21 +162,19 @@ namespace TraCuuThongBaoPhatHanh_v2
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 _cookies = null;
 
-                string directory = !string.IsNullOrWhiteSpace(labelSourcePath.Text) ? labelSourcePath.Text : AppDomain.CurrentDomain.BaseDirectory;
-                Dictionary<string, object> dictionary = new Dictionary<string, object>();
+                _output = !string.IsNullOrWhiteSpace(labelSourcePath.Text) ? labelSourcePath.Text : AppDomain.CurrentDomain.BaseDirectory;
                 List<TINResponse> data = new List<TINResponse>();
 
                 if (ValidateCode(textBoxCaptcha.Text.Trim()))
                 {
                     ShowProgress("Đang đọc danh sách mã số thuế");
-                    List<string> taxCodes = this.ReadDataInputData(directory);
+                    List<string> taxCodes = this.ReadDataInputData(_output);
                     if (taxCodes != null && taxCodes.Any())
                     {
                         ShowProgress("Đang truy xuất thông tin từ Tổng cục Thuế");
                         int count = taxCodes.Count;
                         for (int index = 0; index < count; ++index)
                         {
-                            TINResponse tinResponse = new TINResponse();
                             TINResponse releaseByTaxCode = GetInvoiceReleaseByTaxCode(taxCodes[index]);
                             if (releaseByTaxCode == null || releaseByTaxCode.Releases == null || releaseByTaxCode.Releases.Count <= 0)
                                 releaseByTaxCode.tin = taxCodes[index]?.Trim();
@@ -179,22 +184,26 @@ namespace TraCuuThongBaoPhatHanh_v2
                     if (data.Count > 0)
                     {
                         ShowProgress("Đang xuất thông tin chi tiết");
-                        var output = ExportDataToExcel(data, directory);
+                        _data = data;
                         stopwatch.Stop();
-                        BridgePopupMessage(string.Format("Lấy dữ liệu thành công! Thời gian: {0}", TimeSpan.FromMilliseconds(stopwatch.ElapsedMilliseconds).ToString("hh\\:mm\\:ss")));
-
-                        System.Diagnostics.Process.Start(output);
+                        BridgePopupMessage($"Lấy dữ liệu hoàn tất! Thời gian: {TimeSpan.FromMilliseconds(stopwatch.ElapsedMilliseconds).ToString("hh\\:mm\\:ss")}");
+                        ShowResults(data);
+                    }
+                    else
+                    {
+                        BridgePopupMessage("Không tìm thấy kết quả");
                     }
                 }
                 else
                 {
-                    BridgePopupMessage(string.Format("Captcha sai hoặc hết hạn, nhập captcha mới để tiếp tục"));
+                    BridgePopupMessage("Captcha sai hoặc hết hạn, nhập captcha mới để tiếp tục");
                     ButtonF5_Click(sender, e);
                 }
             }
             catch (Exception ex)
             {
-                BridgePopupMessage(string.Format("Có lỗi xảy ra! {0}", ex.ToString()));
+                BridgePopupMessage("Có lỗi xảy ra!");
+                LogException(ex);
             }
             Invoker((MethodInvoker)(() =>
             {
@@ -218,15 +227,15 @@ namespace TraCuuThongBaoPhatHanh_v2
             Task.Run(() =>
             {
                 ShowProgress("Đang khởi tạo dịch vụ, vui lòng chờ");
-                string captcha = string.Empty;
+                string captchaBase64 = string.Empty;
                 try
                 {
                     if (_driver == null || !_driver.WindowHandles.Any()/* || _headless*/)
-                        _driver = InitializeChrome(true);
+                        _driver = InitializeChrome();
                 }
                 catch
                 {
-                    _driver = InitializeChrome(true);
+                    _driver = InitializeChrome();
                 }
 
                 if (_driver.Url != _mainUrl)
@@ -243,7 +252,7 @@ namespace TraCuuThongBaoPhatHanh_v2
                 {
                     ShowProgress("Đang lấy mã captcha");
                     // refresh captcha
-                    if (captcha != string.Empty || !(sender is FormEntry))
+                    if (captchaBase64 != string.Empty || !(sender is FormEntry))
                     {
                         _driver.FindElement(By.ClassName("ui-icon-refresh")).Click();
                     }
@@ -263,14 +272,35 @@ namespace TraCuuThongBaoPhatHanh_v2
                     var base64String = c.toDataURL();
                     return base64String;
                     ") as string;
-                    captcha = base64String?.Split(',').Last();
+                    captchaBase64 = base64String?.Split(',').Last();
 
                     Invoker((MethodInvoker)(() =>
                     {
-                        pictureBoxCaptcha.Image = Base64ToImage(captcha);
+                        pictureBoxCaptcha.Image = Base64ToImage(captchaBase64);
                     }));
 
-                } while (string.IsNullOrWhiteSpace(captcha));
+                    var captchaFile = SaveBytesToFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Captcha.jpg"), Convert.FromBase64String(captchaBase64));
+                    if (_autoCaptcha)
+                    {
+                        try
+                        {
+                            var captchaText = Ocr.ImageOcrToText(captchaFile);
+                            captchaText = Regex.Replace(captchaText, "[^0-9a-zA-Z]", "");
+                            Invoker((MethodInvoker)(() =>
+                            {
+                                textBoxCaptcha.Text = captchaText;
+                            }));
+                        }
+                        catch (Exception ex)
+                        {
+                            LogException(ex);
+                            _autoCaptcha = false;
+                            UpdateAppConfigAppSettings("auto-captcha", "0");
+                            BridgePopupMessage("Máy tính không hỗ trợ captcha tự động, vui lòng nhập thủ công");
+                        } 
+                    }
+
+                } while (string.IsNullOrWhiteSpace(captchaBase64));
 
                 HideProgress();
             });
@@ -312,11 +342,6 @@ namespace TraCuuThongBaoPhatHanh_v2
             });
         }
 
-        private void LabelUrl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start(((LinkLabel)sender).Text);
-        }
-
         private void LabelSourcePath_TextChanged(object sender, EventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(labelSourcePath.Text))
@@ -329,12 +354,83 @@ namespace TraCuuThongBaoPhatHanh_v2
             buttonClearSourcePath.Visible = false;
         }
 
+        private static string SaveBytesToFile(string fileFullPath, byte[] bytes)
+        {
+            var directory = Path.GetDirectoryName(fileFullPath);
+            try
+            {
+                var extenstion = Path.GetExtension(fileFullPath);
+                foreach (var file in Directory.GetFiles(directory, $"*{extenstion}"))
+                {
+                    File.Delete(file);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            // Create a FileStream object to write a stream to a file
+            using (Stream stream = new MemoryStream(bytes))
+            using (var fileStream = new FileStream(fileFullPath, FileMode.Create, FileAccess.ReadWrite, FileShare.Read, (int)stream.Length))
+            {
+                // Fill the bytes[] array with the stream data
+                byte[] bytesInStream = new byte[stream.Length];
+                stream.Read(bytesInStream, 0, bytesInStream.Length);
+
+                // Use FileStream object to write to the specified file
+                fileStream.Write(bytesInStream, 0, bytesInStream.Length);
+            }
+
+            return fileFullPath;
+        }
+
+        private void UpdateAppConfigAppSettings(string key, string value)
+        {
+            var exeConfig = System.Reflection.Assembly.GetEntryAssembly().GetName().Name + ".config";
+            if (System.IO.File.Exists(exeConfig))
+            {
+                XmlDocument config = new XmlDocument();
+                config.Load(exeConfig);
+                var node = config.SelectSingleNode($"/configuration/appSettings[@key='{key}']");
+                if (node?.Attributes != null)
+                {
+                    node.Attributes["value"].Value = value;
+                }
+                else
+                {
+                    var appSettings = config.SelectSingleNode("/configuration/appSettings");
+                    XmlNode kvp = config.CreateElement("add");
+                    XmlAttribute addAttribute = config.CreateAttribute("key");
+                    addAttribute.Value = key;
+                    kvp.Attributes.Append(addAttribute);
+                    addAttribute = config.CreateAttribute("value");
+                    addAttribute.Value = value;
+                    kvp.Attributes.Append(addAttribute);
+                }
+                config.Save(exeConfig);
+            }
+            else
+            {
+                LogException(new Exception("Không tìm thấy file App.config"));
+            }
+        }
+
         //--------------------------------
         #region worker
+
+        private void ShowResults(IReadOnlyList<TINResponse> data)
+        {
+            DataTable masterData = new DataTable("Master");
+            DataTable detailsData = new DataTable("Details");
+            BuildDataToExport(data, ref masterData, ref detailsData);
+            new Grid(detailsData).ShowDialog();
+        }
+
         private string ExportDataToExcel(IReadOnlyList<TINResponse> data, string exportDirectory)
         {
             DataTable masterData = new DataTable("Master");
-            DataTable detailsData = new DataTable("Detail");
+            DataTable detailsData = new DataTable("Details");
             BuildDataToExport(data, ref masterData, ref detailsData);
             string directoryName = Path.GetDirectoryName(exportDirectory);
             string fileName = Path.Combine(directoryName, $"EasyInvoice_KetQua_{DateTime.Now:dd.MM.yyyy_hh.mm.ss}.xlsx");
@@ -387,6 +483,7 @@ namespace TraCuuThongBaoPhatHanh_v2
             //masterSheetData.Rows.Add(row1);
             detailsSheetData.Columns.Add("STT", typeof(int));
             detailsSheetData.Columns.Add("MST", typeof(string));
+            detailsSheetData.Columns.Add("Tên đơn vị", typeof(string));
             detailsSheetData.Columns.Add("Ngày phát hành", typeof(string));
             detailsSheetData.Columns.Add("Số thông báo", typeof(string));
             detailsSheetData.Columns.Add("Cơ quan thuế quản lý", typeof(string));
@@ -443,23 +540,24 @@ namespace TraCuuThongBaoPhatHanh_v2
                                 DataRow row3 = detailsSheetData.NewRow();
                                 row3[0] = num1;
                                 row3[1] = releases[index2].dtnt_tin;
-                                row3[2] = releases[index2].ngay_phathanh;
-                                row3[3] = releases[index2].so_thong_bao;
-                                row3[4] = releases[index2].cqt_ten;
-                                row3[5] = dtl.ach_ten;
-                                row3[6] = dtl.ach_ma;
-                                row3[7] = dtl.kyhieu;
-                                row3[8] = dtl.soluong;
-                                row3[9] = dtl.tu_so;
-                                row3[10] = dtl.den_so;
-                                row3[11] = dtl.ngay_sdung;
+                                row3[2] = releases[index2].dtnt_ten;
+                                row3[3] = releases[index2].ngay_phathanh;
+                                row3[4] = releases[index2].so_thong_bao;
+                                row3[5] = releases[index2].cqt_ten;
+                                row3[6] = dtl.ach_ten;
+                                row3[7] = dtl.ach_ma;
+                                row3[8] = dtl.kyhieu;
+                                row3[9] = dtl.soluong;
+                                row3[10] = dtl.tu_so;
+                                row3[11] = dtl.den_so;
+                                row3[12] = dtl.ngay_sdung;
                                 if (dtl.da_sdung != null)
-                                    row3[12] = dtl.da_sdung;
-                                row3[13] = dtl.nin_ten;
-                                row3[14] = dtl.nin_tin;
-                                row3[15] = dtl.so_hopdong;
-                                row3[16] = dtl.ngay_hopdong;
-                                row3[17] = dtl.link;
+                                    row3[13] = dtl.da_sdung;
+                                row3[14] = dtl.nin_ten;
+                                row3[15] = dtl.nin_tin;
+                                row3[16] = dtl.so_hopdong;
+                                row3[17] = dtl.ngay_hopdong;
+                                row3[18] = dtl.link;
                                 if (releases[index2].ngay_phathanh.Contains(year.ToString()))
                                 {
                                     num4 += dtl.soluong.Value;
@@ -822,5 +920,18 @@ namespace TraCuuThongBaoPhatHanh_v2
         }
 
         #endregion
+
+        private void LinkLabelExportExcel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_data != null && _data.Any())
+            {
+                var output = ExportDataToExcel(_data, _output);
+                System.Diagnostics.Process.Start(output);
+            }
+            else
+            {
+                BridgePopupMessage("Không có dữ liệu để xuất");
+            }
+        }
     }
 }
