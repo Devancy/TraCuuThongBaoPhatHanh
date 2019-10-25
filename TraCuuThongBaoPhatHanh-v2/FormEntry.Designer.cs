@@ -57,9 +57,9 @@
             this.label3 = new System.Windows.Forms.Label();
             this.pictureBoxLoading = new System.Windows.Forms.PictureBox();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.linkLabelExportExcel = new System.Windows.Forms.LinkLabel();
             this.labelContact = new System.Windows.Forms.Label();
             this.textBoxTaxCodeList = new System.Windows.Forms.TextBox();
-            this.linkLabelExportExcel = new System.Windows.Forms.LinkLabel();
             this.tableLayoutPanel.SuspendLayout();
             this.panelMain.SuspendLayout();
             this.tableLayoutPanelInner.SuspendLayout();
@@ -393,6 +393,17 @@
             this.panelBottom.Size = new System.Drawing.Size(695, 31);
             this.panelBottom.TabIndex = 2;
             // 
+            // linkLabelExportExcel
+            // 
+            this.linkLabelExportExcel.AutoSize = true;
+            this.linkLabelExportExcel.Location = new System.Drawing.Point(61, 9);
+            this.linkLabelExportExcel.Name = "linkLabelExportExcel";
+            this.linkLabelExportExcel.Size = new System.Drawing.Size(58, 13);
+            this.linkLabelExportExcel.TabIndex = 1;
+            this.linkLabelExportExcel.TabStop = true;
+            this.linkLabelExportExcel.Text = "Xuất Excel";
+            this.linkLabelExportExcel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabelExportExcel_LinkClicked);
+            // 
             // labelContact
             // 
             this.labelContact.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -417,17 +428,6 @@
             this.textBoxTaxCodeList.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxTaxCodeList.Size = new System.Drawing.Size(144, 442);
             this.textBoxTaxCodeList.TabIndex = 1;
-            // 
-            // linkLabelExportExcel
-            // 
-            this.linkLabelExportExcel.AutoSize = true;
-            this.linkLabelExportExcel.Location = new System.Drawing.Point(61, 9);
-            this.linkLabelExportExcel.Name = "linkLabelExportExcel";
-            this.linkLabelExportExcel.Size = new System.Drawing.Size(58, 13);
-            this.linkLabelExportExcel.TabIndex = 1;
-            this.linkLabelExportExcel.TabStop = true;
-            this.linkLabelExportExcel.Text = "Xuất Excel";
-            this.linkLabelExportExcel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabelExportExcel_LinkClicked);
             // 
             // FormEntry
             // 

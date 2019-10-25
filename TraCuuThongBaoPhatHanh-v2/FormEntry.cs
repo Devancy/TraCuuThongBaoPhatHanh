@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
 using OfficeOpenXml.Table;
 using OpenQA.Selenium;
@@ -9,6 +10,7 @@ using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -57,6 +59,17 @@ namespace TraCuuThongBaoPhatHanh_v2
             ShowInTaskbar = false;
             _driver?.Quit();
             foreach (var process in Process.GetProcessesByName("chromedriver"))
+            {
+                try
+                {
+                    process.Kill();
+                }
+                catch (Exception ex)
+                {
+                    LogException(ex);
+                }
+            }
+            foreach (var process in Process.GetProcessesByName("Chromium"))
             {
                 try
                 {
@@ -157,12 +170,15 @@ namespace TraCuuThongBaoPhatHanh_v2
                 buttonExecute.Enabled = false;
                 buttonExecute.Text = "Executing";
             }));
+
+            string currentTaxCode = string.Empty;
+
             try
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 _cookies = null;
 
-                _output = !string.IsNullOrWhiteSpace(labelSourcePath.Text) ? labelSourcePath.Text : AppDomain.CurrentDomain.BaseDirectory;
+                _output = !string.IsNullOrWhiteSpace(labelSourcePath.Text) ? labelSourcePath.Text : AppDomain.CurrentDomain.BaseDirectory + "Output";
                 List<TINResponse> data = new List<TINResponse>();
 
                 if (ValidateCode(textBoxCaptcha.Text.Trim()))
@@ -175,10 +191,24 @@ namespace TraCuuThongBaoPhatHanh_v2
                         int count = taxCodes.Count;
                         for (int index = 0; index < count; ++index)
                         {
-                            TINResponse releaseByTaxCode = GetInvoiceReleaseByTaxCode(taxCodes[index]);
-                            if (releaseByTaxCode == null || releaseByTaxCode.Releases == null || releaseByTaxCode.Releases.Count <= 0)
-                                releaseByTaxCode.tin = taxCodes[index]?.Trim();
-                            data.Add(releaseByTaxCode);
+                            currentTaxCode = taxCodes[index];
+                            try
+                            {
+                                TINResponse releaseByTaxCode = GetInvoiceReleaseByTaxCode(currentTaxCode);
+                                if (releaseByTaxCode == null || releaseByTaxCode.Releases == null || releaseByTaxCode.Releases.Count <= 0)
+                                    releaseByTaxCode.tin = currentTaxCode?.Trim();
+                                data.Add(releaseByTaxCode);
+                            }
+                            catch (Exception ex)
+                            {
+                                if (ex is InvalidResponseJsonException)
+                                {
+                                    TINResponse error = CreateErrorTINResponse(currentTaxCode);
+                                    data.Add(error);
+                                }
+                                else
+                                    throw ex;
+                            }
                         }
                     }
                     if (data.Count > 0)
@@ -186,8 +216,7 @@ namespace TraCuuThongBaoPhatHanh_v2
                         ShowProgress("Đang xuất thông tin chi tiết");
                         _data = data;
                         stopwatch.Stop();
-                        BridgePopupMessage($"Lấy dữ liệu hoàn tất! Thời gian: {TimeSpan.FromMilliseconds(stopwatch.ElapsedMilliseconds).ToString("hh\\:mm\\:ss")}");
-                        ShowResults(data);
+                        ShowResults(data, $"Thời gian xử lý {TimeSpan.FromMilliseconds(stopwatch.ElapsedMilliseconds).ToString("hh\\:mm\\:ss")}");
                     }
                     else
                     {
@@ -202,8 +231,8 @@ namespace TraCuuThongBaoPhatHanh_v2
             }
             catch (Exception ex)
             {
-                BridgePopupMessage("Có lỗi xảy ra!");
-                LogException(ex);
+                BridgePopupMessage($"Có lỗi xảy ra! Mã số thuế đang xử lý - {currentTaxCode}\r\n{ex.Message}");
+                LogException(new Exception($"Mã số thuế đang xử lý - {currentTaxCode}", ex));
             }
             Invoker((MethodInvoker)(() =>
             {
@@ -213,6 +242,32 @@ namespace TraCuuThongBaoPhatHanh_v2
             }));
             HideProgress();
             return Task.FromResult((object)null);
+        }
+
+        private static TINResponse CreateErrorTINResponse(string taxCode)
+        {
+            TINResponse response = new TINResponse
+            {
+                Releases = new List<Release> {
+                    new Release {
+                    dtnt_ten = "Lỗi truy vấn, kiểm tra lại MST",
+                    dtnt_tin = taxCode,
+                    ngay_phathanh = " ",
+                    dtls =
+                        new List<ReleaseDetail> {
+                            new ReleaseDetail {
+                                soluong = 0,
+                                tu_so = 0,
+                                den_so = 0,
+                                ach_lan_thaydoi = 0,
+                                kyhieu = " "
+                            }
+                        }
+                    }
+                }
+            };
+
+            return response;
         }
 
         private void ButtonSelectDataSource_Click(object sender, EventArgs e)
@@ -228,25 +283,25 @@ namespace TraCuuThongBaoPhatHanh_v2
             {
                 ShowProgress("Đang khởi tạo dịch vụ, vui lòng chờ");
                 string captchaBase64 = string.Empty;
+
                 try
                 {
                     if (_driver == null || !_driver.WindowHandles.Any()/* || _headless*/)
                         _driver = InitializeChrome();
-                }
-                catch
-                {
-                    _driver = InitializeChrome();
-                }
 
-                if (_driver.Url != _mainUrl)
-                {
-                    _driver.Navigate().GoToUrl(_mainUrl);
+                    if (_driver.Url != _mainUrl)
+                    {
+                        _driver.Navigate().GoToUrl(_mainUrl);
+                    }
                 }
-                //else
-                //{
-                //    if(captcha == string.Empty)
-                //        _driver.Navigate().Refresh();
-                //}
+                catch (Exception ex)
+                {
+                    LogException(ex);
+                    BridgePopupMessage("Lỗi khởi tạo dịch vụ, liên hệ để được hỗ trợ", icon: MessageBoxIcon.Error);
+                    HideProgress();
+                    return;
+                    //_driver = InitializeChrome();
+                }
 
                 do
                 {
@@ -297,7 +352,7 @@ namespace TraCuuThongBaoPhatHanh_v2
                             _autoCaptcha = false;
                             UpdateAppConfigAppSettings("auto-captcha", "0");
                             BridgePopupMessage("Máy tính không hỗ trợ captcha tự động, vui lòng nhập thủ công");
-                        } 
+                        }
                     }
 
                 } while (string.IsNullOrWhiteSpace(captchaBase64));
@@ -419,12 +474,15 @@ namespace TraCuuThongBaoPhatHanh_v2
         //--------------------------------
         #region worker
 
-        private void ShowResults(IReadOnlyList<TINResponse> data)
+        private void ShowResults(IReadOnlyList<TINResponse> data, string elapsed)
         {
             DataTable masterData = new DataTable("Master");
             DataTable detailsData = new DataTable("Details");
             BuildDataToExport(data, ref masterData, ref detailsData);
-            new Grid(detailsData).ShowDialog();
+            Invoker((MethodInvoker)(() =>
+            {
+                new Grid(detailsData, elapsed).ShowDialog(this);
+            }));
         }
 
         private string ExportDataToExcel(IReadOnlyList<TINResponse> data, string exportDirectory)
@@ -489,17 +547,17 @@ namespace TraCuuThongBaoPhatHanh_v2
             detailsSheetData.Columns.Add("Cơ quan thuế quản lý", typeof(string));
             detailsSheetData.Columns.Add("Tên loại hóa đơn", typeof(string));
             detailsSheetData.Columns.Add("Mẫu số", typeof(string));
-            detailsSheetData.Columns.Add("Kí hiệu", typeof(string));
+            detailsSheetData.Columns.Add("Ký hiệu", typeof(string));
+            detailsSheetData.Columns.Add("Ngày bắt đầu sử dụng", typeof(string));
             detailsSheetData.Columns.Add("Số lượng", typeof(int));
             detailsSheetData.Columns.Add("Từ số", typeof(int));
             detailsSheetData.Columns.Add("Đến số", typeof(int));
-            detailsSheetData.Columns.Add("Ngày bắt đầu sử dụng", typeof(string));
             detailsSheetData.Columns.Add("Đã sử dụng", typeof(int));
             detailsSheetData.Columns.Add("Doanh nghiệp in", typeof(string));
             detailsSheetData.Columns.Add("Mã số thuế", typeof(string));
             detailsSheetData.Columns.Add("Hợp đồng đặt in số", typeof(string));
             detailsSheetData.Columns.Add("Hợp đồng đặt in ngày", typeof(string));
-            detailsSheetData.Columns.Add("Link", typeof(string));
+            //detailsSheetData.Columns.Add("Link", typeof(string));
             int num1 = 1;
             for (int index1 = 0; index1 < data.Count; ++index1)
             {
@@ -547,17 +605,26 @@ namespace TraCuuThongBaoPhatHanh_v2
                                 row3[6] = dtl.ach_ten;
                                 row3[7] = dtl.ach_ma;
                                 row3[8] = dtl.kyhieu;
-                                row3[9] = dtl.soluong;
-                                row3[10] = dtl.tu_so;
-                                row3[11] = dtl.den_so;
-                                row3[12] = dtl.ngay_sdung;
+
+                                DateTime dateTime;
+                                if (DateTime.TryParse(dtl.ngay_sdung, out dateTime))
+                                {
+                                    row3[9] = dateTime.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+                                }
+                                else
+                                {
+                                    row3[9] = dtl.ngay_sdung;
+                                }
+                                row3[10] = dtl.soluong;
+                                row3[11] = dtl.tu_so;
+                                row3[12] = dtl.den_so;
                                 if (dtl.da_sdung != null)
                                     row3[13] = dtl.da_sdung;
                                 row3[14] = dtl.nin_ten;
                                 row3[15] = dtl.nin_tin;
                                 row3[16] = dtl.so_hopdong;
                                 row3[17] = dtl.ngay_hopdong;
-                                row3[18] = dtl.link;
+                                //row3[18] = dtl.link;
                                 if (releases[index2].ngay_phathanh.Contains(year.ToString()))
                                 {
                                     num4 += dtl.soluong.Value;
@@ -576,7 +643,7 @@ namespace TraCuuThongBaoPhatHanh_v2
                                     if (dtl.kyhieu.Last<char>().ToString().ToLower() == "e")
                                         num9 += dtl.soluong.Value;
                                 }
-                                if (dtl.kyhieu.Last<char>().ToString().ToLower() == "e" && !string.IsNullOrWhiteSpace(dtl.nin_ten))
+                                if (dtl.kyhieu.LastOrDefault().ToString().ToLower() == "e" && !string.IsNullOrWhiteSpace(dtl.nin_ten))
                                     stringBuilder.Append($"\n{dtl.nin_ten}");
                                 detailsSheetData.Rows.Add(row3);
                                 ++num1;
@@ -607,23 +674,23 @@ namespace TraCuuThongBaoPhatHanh_v2
             if (!string.IsNullOrWhiteSpace(textArea))
             {
                 var temp = textArea.Split(new[] { ";", ",", "\t", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                if(temp.Any())
+                if (temp.Any())
                 {
                     results.AddRange(temp);
                 }
             }
 
-            if(!results.Any())
+            if (!results.Any())
             {
                 var lines = File.ReadAllLines(filePath);
-                foreach(var line in lines)
+                foreach (var line in lines)
                 {
                     var alias = line?.Trim();
-                    if(!string.IsNullOrEmpty(alias))
+                    if (!string.IsNullOrEmpty(alias))
                         results.Add(alias);
                 }
             }
-            
+
             return results;
         }
 
@@ -679,7 +746,11 @@ namespace TraCuuThongBaoPhatHanh_v2
             else
                 ++_tokenName;
             string empty = string.Empty;
-            var dictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(GetRequest($"http://www.tracuuhoadon.gdt.gov.vn/getnewtoken.html?token={_token}&struts.token.name=token&_={_tokenName}"));
+            var token = GetRequest($"http://www.tracuuhoadon.gdt.gov.vn/getnewtoken.html?token={_token}&struts.token.name=token&_={_tokenName}");
+            if (!IsValidJson(token))
+                throw new InvalidResponseJsonException(token);
+
+            var dictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(token);
             if (dictionary.ContainsKey("newToken") && dictionary["newToken"] != null)
             {
                 empty = dictionary["newToken"].ToString();
@@ -692,16 +763,13 @@ namespace TraCuuThongBaoPhatHanh_v2
         {
             var tinResponse = new TINResponse();
             string str = PostJsonRequest("", $"http://www.tracuuhoadon.gdt.gov.vn/gettin.html?tin={taxCode}&captchaCode={captchaCode}");
+
+            if (!IsValidJson(str))
+                throw new InvalidResponseJsonException(str);
+
             if (!string.IsNullOrWhiteSpace(str))
             {
-                try
-                {
-                    tinResponse = JsonConvert.DeserializeObject<TINResponse>(str);
-                }
-                catch (Exception ex)
-                {
-                    LogException(ex);
-                }
+                tinResponse = JsonConvert.DeserializeObject<TINResponse>(str);
             }
             return tinResponse;
         }
@@ -712,17 +780,13 @@ namespace TraCuuThongBaoPhatHanh_v2
             double totalMilliseconds = DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
             if (!string.IsNullOrEmpty(GetNewToken()))
             {
-                string method = GetRequest($"http://www.tracuuhoadon.gdt.gov.vn/searchtbph.html?_search=false&nd={totalMilliseconds}&rows=1000&page={page}&sidx=&sord=asc&kind={kind}&tin={taxCode}&ngayTu={fromDate}&ngayDen={toDate}&captchaCode={captchaCode}&token={_token}&struts.token.name=token&_={_tokenName}");
-                if (!string.IsNullOrWhiteSpace(method))
+                string tbph = GetRequest($"http://www.tracuuhoadon.gdt.gov.vn/searchtbph.html?_search=false&nd={totalMilliseconds}&rows=1000&page={page}&sidx=&sord=asc&kind={kind}&tin={taxCode}&ngayTu={fromDate}&ngayDen={toDate}&captchaCode={captchaCode}&token={_token}&struts.token.name=token&_={_tokenName}");
+                if (!IsValidJson(tbph))
+                    throw new InvalidResponseJsonException(tbph);
+
+                if (!string.IsNullOrWhiteSpace(tbph))
                 {
-                    try
-                    {
-                        releaseResponse = JsonConvert.DeserializeObject<ReleaseResponse>(method);
-                    }
-                    catch (Exception ex)
-                    {
-                        LogException(ex);
-                    }
+                    releaseResponse = JsonConvert.DeserializeObject<ReleaseResponse>(tbph);
                 }
             }
             return releaseResponse;
@@ -738,19 +802,13 @@ namespace TraCuuThongBaoPhatHanh_v2
             if (!string.IsNullOrWhiteSpace(PostJsonRequest(paramz, viewUrl)))
             {
                 string detailsUrl = $"http://{urlPrefix}.tracuuhoadon.gdt.gov.vn/gettbphdtl.html?id={releaseId}&ltd={ltd}";
-                double totalMilliseconds = DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
                 ++_tokenName;
-                string method = GetRequest(detailsUrl);
-                if (!string.IsNullOrWhiteSpace(method))
+                string details = GetRequest(detailsUrl);
+                if (!IsValidJson(details))
+                    throw new InvalidResponseJsonException(details);
+                if (!string.IsNullOrWhiteSpace(details))
                 {
-                    try
-                    {
-                        releaseDetailResponse = JsonConvert.DeserializeObject<ReleaseDetailResponse>(method);
-                    }
-                    catch (Exception ex)
-                    {
-                        LogException(ex);
-                    }
+                    releaseDetailResponse = JsonConvert.DeserializeObject<ReleaseDetailResponse>(details);
                 }
             }
             return releaseDetailResponse;
@@ -796,7 +854,7 @@ namespace TraCuuThongBaoPhatHanh_v2
             Stream requestStream = httpWebRequest.GetRequestStream();
             requestStream.Write(bytes, 0, bytes.Length);
             requestStream.Close();
-            using (HttpWebResponse response = (HttpWebResponse) httpWebRequest.GetResponse())
+            using (HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse())
             {
                 UpdateCookie(response);
                 using (var responseStream = response.GetResponseStream())
@@ -816,7 +874,7 @@ namespace TraCuuThongBaoPhatHanh_v2
                 GetCookies();
             httpWebRequest.CookieContainer = new CookieContainer();
             httpWebRequest.CookieContainer.Add(_cookies);
-            using (HttpWebResponse response = (HttpWebResponse) httpWebRequest.GetResponse())
+            using (HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse())
             {
                 UpdateCookie(response);
                 using (var responseStream = response.GetResponseStream())
@@ -931,6 +989,19 @@ namespace TraCuuThongBaoPhatHanh_v2
             else
             {
                 BridgePopupMessage("Không có dữ liệu để xuất");
+            }
+        }
+
+        public static bool IsValidJson(string value)
+        {
+            try
+            {
+                var json = JToken.Parse(value);
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
     }
