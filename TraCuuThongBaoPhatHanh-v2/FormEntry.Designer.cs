@@ -289,7 +289,7 @@
             this.labelInfo.AutoSize = true;
             this.labelInfo.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelInfo.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.labelInfo.Location = new System.Drawing.Point(351, 130);
+            this.labelInfo.Location = new System.Drawing.Point(300, 130);
             this.labelInfo.Name = "labelInfo";
             this.labelInfo.Size = new System.Drawing.Size(324, 19);
             this.labelInfo.TabIndex = 36;
@@ -362,6 +362,7 @@
             // textBoxTaxCodeList
             // 
             this.textBoxTaxCodeList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxTaxCodeList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxTaxCodeList.Location = new System.Drawing.Point(4, 4);
             this.textBoxTaxCodeList.Multiline = true;
             this.textBoxTaxCodeList.Name = "textBoxTaxCodeList";
@@ -400,13 +401,14 @@
             // pictureBoxLoading
             // 
             this.pictureBoxLoading.Image = global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.cat;
-            this.pictureBoxLoading.Location = new System.Drawing.Point(243, 62);
+            this.pictureBoxLoading.Location = new System.Drawing.Point(192, 62);
             this.pictureBoxLoading.Name = "pictureBoxLoading";
             this.pictureBoxLoading.Size = new System.Drawing.Size(111, 94);
             this.pictureBoxLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxLoading.TabIndex = 35;
             this.pictureBoxLoading.TabStop = false;
             this.pictureBoxLoading.Visible = false;
+            this.pictureBoxLoading.Click += new System.EventHandler(this.pictureBoxLoading_Click);
             // 
             // buttonF5
             // 

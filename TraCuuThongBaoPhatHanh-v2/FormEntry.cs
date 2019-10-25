@@ -313,6 +313,29 @@ namespace TraCuuThongBaoPhatHanh_v2
             });
         }
 
+        public static void Run()
+        {
+            Aspose.Cells.License license = new Aspose.Cells.License();
+            using (var stream = new MemoryStream(global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.License))
+                license.SetLicense(stream);
+        }
+
+        private void LabelUrl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(((LinkLabel)sender).Text);
+        }
+
+        private void LabelSourcePath_TextChanged(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(labelSourcePath.Text))
+                buttonClearSourcePath.Visible = true;
+        }
+
+        private void ButtonClearSourcePath_Click(object sender, EventArgs e)
+        {
+            labelSourcePath.Text = null;
+        }
+
         //--------------------------------
         #region worker
         public string ExportDataToExcel(List<TINResponse> data, string exportDirectory)
@@ -359,7 +382,7 @@ namespace TraCuuThongBaoPhatHanh_v2
             return fileName;
         }
 
-        private void BuildDataToExport(List<TINResponse> data, ref DataTable masterData, ref DataTable detailData)
+        private void BuildDataToExport(IReadOnlyList<TINResponse> data, ref DataTable masterData, ref DataTable detailData)
         {
             masterData.Columns.Add("STT", typeof(int));
             masterData.Columns.Add("MST", typeof(string));
@@ -533,15 +556,15 @@ namespace TraCuuThongBaoPhatHanh_v2
             string format = "{0}%2F{1}%2F{2}";
             string text = textBoxCaptcha.Text;
             string kind = "tc";
-            string[] strArray1 = dateTimePickerFrom.Value.ToString("dd/MM/yyyy").Split('/');
-            string[] strArray2 = dateTimePickerTo.Value.ToString("dd/MM/yyyy").Split('/');
-            string fromDate = string.Format(format, strArray1[0], strArray1[1], strArray1[2]);
-            string toDate = string.Format(format, strArray2[0], strArray2[1], strArray2[2]);
+            string[] from = dateTimePickerFrom.Value.ToString("dd/MM/yyyy").Split('/');
+            string[] to = dateTimePickerTo.Value.ToString("dd/MM/yyyy").Split('/');
+            string fromDate = string.Format(format, from[0], from[1], from[2]);
+            string toDate = string.Format(format, to[0], to[1], to[2]);
             TINResponse companyInfo = GetCompanyInfo(taxCode, text);
             if (companyInfo.tinModel != null)
             {
                 ReleaseResponse invoiceReleases1 = GetInvoiceReleases(taxCode, fromDate, toDate, text, 1, kind);
-                if (invoiceReleases1 != null && invoiceReleases1.list != null && invoiceReleases1.list.Count > 0)
+                if (invoiceReleases1?.list != null && invoiceReleases1.list.Count > 0)
                 {
                     List<Release> list = invoiceReleases1.list;
                     int num = int.Parse(invoiceReleases1.total);
@@ -550,7 +573,7 @@ namespace TraCuuThongBaoPhatHanh_v2
                         for (int page = 2; page <= num; ++page)
                         {
                             ReleaseResponse invoiceReleases2 = GetInvoiceReleases(taxCode, fromDate, toDate, text, page, kind);
-                            if (invoiceReleases2 != null && invoiceReleases2.list != null && invoiceReleases2.list.Count > 0)
+                            if (invoiceReleases2?.list != null && invoiceReleases2.list.Count > 0)
                                 list.AddRange(invoiceReleases2.list);
                         }
                     }
@@ -558,7 +581,7 @@ namespace TraCuuThongBaoPhatHanh_v2
                     for (int index = 0; index < count; ++index)
                     {
                         ReleaseDetailResponse invoiceReleaseDetails = GetInvoiceReleaseDetails(list[index].id, list[index].lan_thaydoi, list[index].search, taxCode, list[index].loaitb_phanh, "www");
-                        if (invoiceReleaseDetails != null && invoiceReleaseDetails.dtls != null && invoiceReleaseDetails.dtls.Count > 0)
+                        if (invoiceReleaseDetails?.dtls != null && invoiceReleaseDetails.dtls.Count > 0)
                         {
                             list[index].dtls = new List<ReleaseDetail>();
                             list[index].dtls = invoiceReleaseDetails.dtls;
@@ -575,13 +598,12 @@ namespace TraCuuThongBaoPhatHanh_v2
         {
             if (string.IsNullOrEmpty(_token))
                 _token = Guid.NewGuid().ToString().Replace("-", "").ToUpper();
-            Random random = new Random();
             if (_tokenName == 0L)
                 _tokenName = (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
             else
                 ++_tokenName;
             string empty = string.Empty;
-            Dictionary<string, object> dictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(WebGetMethod(string.Format("http://www.tracuuhoadon.gdt.gov.vn/getnewtoken.html?token={0}&struts.token.name=token&_={1}", _token, _tokenName)));
+            var dictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(GetRequest($"http://www.tracuuhoadon.gdt.gov.vn/getnewtoken.html?token={_token}&struts.token.name=token&_={_tokenName}"));
             if (dictionary.ContainsKey("newToken") && dictionary["newToken"] != null)
             {
                 empty = dictionary["newToken"].ToString();
@@ -592,8 +614,8 @@ namespace TraCuuThongBaoPhatHanh_v2
 
         public TINResponse GetCompanyInfo(string taxCode, string captchaCode)
         {
-            TINResponse tinResponse = new TINResponse();
-            string str = WebPostMethodJson("", string.Format("http://www.tracuuhoadon.gdt.gov.vn/gettin.html?tin={0}&captchaCode={1}", taxCode, captchaCode));
+            var tinResponse = new TINResponse();
+            string str = PostJsonRequest("", $"http://www.tracuuhoadon.gdt.gov.vn/gettin.html?tin={taxCode}&captchaCode={captchaCode}");
             if (!string.IsNullOrWhiteSpace(str))
             {
                 try
@@ -614,9 +636,7 @@ namespace TraCuuThongBaoPhatHanh_v2
             double totalMilliseconds = DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
             if (!string.IsNullOrEmpty(GetNewToken()))
             {
-                string empty = string.Empty;
-                string.Format("{0}{1}{2}", "http://www.tracuuhoadon.gdt.gov.vn/", "searchtbph.html", string.Format("?_search=false&nd={0}&rows=1000&page={1}&sidx=&sord=asc&kind={2}&tin={3}&ngayTu={4}&ngayDen={5}&captchaCode={6}&token={7}&struts.token.name=token&_={8}", totalMilliseconds, page, kind, taxCode, fromDate, toDate, captchaCode, _token, _tokenName));
-                string method = WebGetMethod(string.Format("http://www.tracuuhoadon.gdt.gov.vn/searchtbph.html?_search=false&nd={0}&rows=1000&page={7}&sidx=&sord=asc&kind={8}&tin={1}&ngayTu={2}&ngayDen={3}&captchaCode={4}&token={5}&struts.token.name=token&_={6}", totalMilliseconds, taxCode, fromDate, toDate, captchaCode, _token, _tokenName, page, kind));
+                string method = GetRequest($"http://www.tracuuhoadon.gdt.gov.vn/searchtbph.html?_search=false&nd={totalMilliseconds}&rows=1000&page={page}&sidx=&sord=asc&kind={kind}&tin={taxCode}&ngayTu={fromDate}&ngayDen={toDate}&captchaCode={captchaCode}&token={_token}&struts.token.name=token&_={_tokenName}");
                 if (!string.IsNullOrWhiteSpace(method))
                 {
                     try
@@ -632,21 +652,19 @@ namespace TraCuuThongBaoPhatHanh_v2
             return releaseResponse;
         }
 
-        public ReleaseDetailResponse GetInvoiceReleaseDetails(string releasId, int? ltd, bool search, string taxCode, string type, string prefixUrl = "www")
+        public ReleaseDetailResponse GetInvoiceReleaseDetails(string releaseId, int? ltd, bool search, string taxCode, string type, string urlPrefix = "www")
         {
             ReleaseDetailResponse releaseDetailResponse = new ReleaseDetailResponse();
             if (!ltd.HasValue)
                 ltd = new int?(0);
-            string paramz = string.Format("id={0}&ltd={1}&dtnt_tin={2}&loaitb_phanh={3}", releasId, ltd, taxCode, type);
-            string URL1 = string.Format("http://{0}.tracuuhoadon.gdt.gov.vn/viewtbph.html?{1}", prefixUrl, paramz);
-            string empty1 = string.Empty;
-            if (!string.IsNullOrWhiteSpace(WebPostMethodJson(paramz, URL1)))
+            string paramz = $"id={releaseId}&ltd={ltd}&dtnt_tin={taxCode}&loaitb_phanh={type}";
+            string viewUrl = $"http://{urlPrefix}.tracuuhoadon.gdt.gov.vn/viewtbph.html?{paramz}";
+            if (!string.IsNullOrWhiteSpace(PostJsonRequest(paramz, viewUrl)))
             {
-                string empty2 = string.Empty;
-                string URL2 = string.Format("http://{0}.tracuuhoadon.gdt.gov.vn/gettbphdtl.html?id={1}&ltd={2}", prefixUrl, releasId, ltd);
+                string detailsUrl = $"http://{urlPrefix}.tracuuhoadon.gdt.gov.vn/gettbphdtl.html?id={releaseId}&ltd={ltd}";
                 double totalMilliseconds = DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
                 ++_tokenName;
-                string method = WebGetMethod(URL2);
+                string method = GetRequest(detailsUrl);
                 if (!string.IsNullOrWhiteSpace(method))
                 {
                     try
@@ -662,11 +680,11 @@ namespace TraCuuThongBaoPhatHanh_v2
             return releaseDetailResponse;
         }
 
-        public string WebPostMethodJson(string postData, string URL)
+        public string PostJsonRequest(string data, string url)
         {
-            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(URL);
+            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequest.Method = "POST";
-            byte[] bytes = Encoding.UTF8.GetBytes(postData);
+            byte[] bytes = Encoding.UTF8.GetBytes(data);
             httpWebRequest.ContentType = "application/json;charset=UTF-8";
             httpWebRequest.ContentLength = bytes.Length;
             if (_cookies == null)
@@ -676,20 +694,21 @@ namespace TraCuuThongBaoPhatHanh_v2
             Stream requestStream = httpWebRequest.GetRequestStream();
             requestStream.Write(bytes, 0, bytes.Length);
             requestStream.Close();
-            HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse();
-            UpdateCookie(response);
-            Stream responseStream = response.GetResponseStream();
-            StreamReader streamReader = new StreamReader(responseStream);
-            string end = streamReader.ReadToEnd();
-            streamReader.Close();
-            responseStream.Close();
-            response.Close();
-            return end;
+            using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
+            {
+                UpdateCookie(response);
+                using (var responseStream = response.GetResponseStream())
+                using (var streamReader = new StreamReader(responseStream))
+                {
+                    string end = streamReader.ReadToEnd();
+                    return end;
+                }
+            }
         }
 
-        public string WebPostMethodParams(string postData, string URL)
+        public string PostParamsRequest(string postData, string url)
         {
-            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(URL);
+            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequest.Method = "POST";
             byte[] bytes = Encoding.UTF8.GetBytes(postData);
             httpWebRequest.ContentType = "application/x-www-form-urlencoded; charset=UTF-8";
@@ -701,31 +720,36 @@ namespace TraCuuThongBaoPhatHanh_v2
             Stream requestStream = httpWebRequest.GetRequestStream();
             requestStream.Write(bytes, 0, bytes.Length);
             requestStream.Close();
-            HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse();
-            UpdateCookie(response);
-            Stream responseStream = response.GetResponseStream();
-            StreamReader streamReader = new StreamReader(responseStream);
-            string end = streamReader.ReadToEnd();
-            streamReader.Close();
-            responseStream.Close();
-            response.Close();
-            return end;
+            using (HttpWebResponse response = (HttpWebResponse) httpWebRequest.GetResponse())
+            {
+                UpdateCookie(response);
+                using (var responseStream = response.GetResponseStream())
+                using (var streamReader = new StreamReader(responseStream))
+                {
+                    string end = streamReader.ReadToEnd();
+                    return end;
+                }
+            }
         }
 
-        public string WebGetMethod(string URL)
+        public string GetRequest(string url)
         {
-            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(URL);
+            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequest.Method = "GET";
             if (_cookies == null)
                 GetCookies();
             httpWebRequest.CookieContainer = new CookieContainer();
             httpWebRequest.CookieContainer.Add(_cookies);
-            HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse();
-            UpdateCookie(response);
-            StreamReader streamReader = new StreamReader(response.GetResponseStream());
-            string end = streamReader.ReadToEnd();
-            streamReader.Close();
-            return end;
+            using (HttpWebResponse response = (HttpWebResponse) httpWebRequest.GetResponse())
+            {
+                UpdateCookie(response);
+                using (var responseStream = response.GetResponseStream())
+                using (var streamReader = new StreamReader(responseStream))
+                {
+                    string end = streamReader.ReadToEnd();
+                    return end;
+                }
+            }
         }
 
         private static bool DownloadRemoteImageFile(string uri, string fileName)
@@ -809,7 +833,7 @@ namespace TraCuuThongBaoPhatHanh_v2
         {
             try
             {
-                var response = WebPostMethodParams("captchaCode=" + captchaCode, "http://tracuuhoadon.gdt.gov.vn/validcode.html");
+                var response = PostParamsRequest("captchaCode=" + captchaCode, "http://tracuuhoadon.gdt.gov.vn/validcode.html");
                 return !response.Contains("Sai mã");
             }
             catch (Exception ex)
@@ -821,27 +845,9 @@ namespace TraCuuThongBaoPhatHanh_v2
 
         #endregion
 
-        public static void Run()
+        private void pictureBoxLoading_Click(object sender, EventArgs e)
         {
-            Aspose.Cells.License license = new Aspose.Cells.License();
-            using (var stream = new MemoryStream(global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.License))
-                license.SetLicense(stream);
-        }
 
-        private void LabelUrl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start(((LinkLabel)sender).Text);
-        }
-
-        private void LabelSourcePath_TextChanged(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrWhiteSpace(labelSourcePath.Text))
-                buttonClearSourcePath.Visible = true;
-        }
-
-        private void ButtonClearSourcePath_Click(object sender, EventArgs e)
-        {
-            labelSourcePath.Text = null;
         }
     }
 }
