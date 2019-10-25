@@ -113,8 +113,8 @@
             this.tableLayoutPanelInner.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanelInner.Name = "tableLayoutPanelInner";
             this.tableLayoutPanelInner.RowCount = 3;
-            this.tableLayoutPanelInner.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanelInner.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanelInner.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            this.tableLayoutPanelInner.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.tableLayoutPanelInner.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanelInner.Size = new System.Drawing.Size(717, 442);
             this.tableLayoutPanelInner.TabIndex = 0;
@@ -136,7 +136,7 @@
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelTop.Location = new System.Drawing.Point(5, 5);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(711, 186);
+            this.panelTop.Size = new System.Drawing.Size(711, 224);
             this.panelTop.TabIndex = 0;
             // 
             // buttonClearSourcePath
@@ -147,7 +147,7 @@
             this.buttonClearSourcePath.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonClearSourcePath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonClearSourcePath.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.buttonClearSourcePath.Location = new System.Drawing.Point(227, 82);
+            this.buttonClearSourcePath.Location = new System.Drawing.Point(227, 112);
             this.buttonClearSourcePath.Name = "buttonClearSourcePath";
             this.buttonClearSourcePath.Size = new System.Drawing.Size(25, 24);
             this.buttonClearSourcePath.TabIndex = 35;
@@ -160,7 +160,7 @@
             // 
             this.labelStep2.AutoSize = true;
             this.labelStep2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelStep2.Location = new System.Drawing.Point(43, 133);
+            this.labelStep2.Location = new System.Drawing.Point(43, 173);
             this.labelStep2.Name = "labelStep2";
             this.labelStep2.Size = new System.Drawing.Size(20, 17);
             this.labelStep2.TabIndex = 34;
@@ -170,7 +170,7 @@
             // 
             this.labelStep1.AutoSize = true;
             this.labelStep1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelStep1.Location = new System.Drawing.Point(43, 62);
+            this.labelStep1.Location = new System.Drawing.Point(43, 92);
             this.labelStep1.Name = "labelStep1";
             this.labelStep1.Size = new System.Drawing.Size(20, 17);
             this.labelStep1.TabIndex = 34;
@@ -179,7 +179,7 @@
             // labelSourcePath
             // 
             this.labelSourcePath.AutoSize = true;
-            this.labelSourcePath.Location = new System.Drawing.Point(253, 87);
+            this.labelSourcePath.Location = new System.Drawing.Point(253, 117);
             this.labelSourcePath.Name = "labelSourcePath";
             this.labelSourcePath.Size = new System.Drawing.Size(0, 13);
             this.labelSourcePath.TabIndex = 33;
@@ -189,7 +189,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(464, 133);
+            this.label1.Location = new System.Drawing.Point(464, 173);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(32, 17);
             this.label1.TabIndex = 28;
@@ -199,7 +199,7 @@
             // 
             this.labelDateRange.AutoSize = true;
             this.labelDateRange.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelDateRange.Location = new System.Drawing.Point(61, 133);
+            this.labelDateRange.Location = new System.Drawing.Point(61, 173);
             this.labelDateRange.Name = "labelDateRange";
             this.labelDateRange.Size = new System.Drawing.Size(183, 17);
             this.labelDateRange.TabIndex = 30;
@@ -209,7 +209,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(61, 85);
+            this.label2.Location = new System.Drawing.Point(61, 115);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(92, 17);
             this.label2.TabIndex = 31;
@@ -219,7 +219,7 @@
             // 
             this.labelInstruction.AutoSize = true;
             this.labelInstruction.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelInstruction.Location = new System.Drawing.Point(61, 62);
+            this.labelInstruction.Location = new System.Drawing.Point(61, 92);
             this.labelInstruction.Name = "labelInstruction";
             this.labelInstruction.Size = new System.Drawing.Size(498, 17);
             this.labelInstruction.TabIndex = 32;
@@ -230,7 +230,7 @@
             this.dateTimePickerTo.CustomFormat = "dd/MM/yyyy";
             this.dateTimePickerTo.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dateTimePickerTo.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dateTimePickerTo.Location = new System.Drawing.Point(538, 128);
+            this.dateTimePickerTo.Location = new System.Drawing.Point(538, 168);
             this.dateTimePickerTo.Name = "dateTimePickerTo";
             this.dateTimePickerTo.Size = new System.Drawing.Size(122, 23);
             this.dateTimePickerTo.TabIndex = 4;
@@ -241,7 +241,7 @@
             this.dateTimePickerFrom.CustomFormat = "dd/MM/yyyy";
             this.dateTimePickerFrom.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dateTimePickerFrom.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dateTimePickerFrom.Location = new System.Drawing.Point(303, 128);
+            this.dateTimePickerFrom.Location = new System.Drawing.Point(303, 168);
             this.dateTimePickerFrom.Name = "dateTimePickerFrom";
             this.dateTimePickerFrom.Size = new System.Drawing.Size(122, 23);
             this.dateTimePickerFrom.TabIndex = 3;
@@ -259,16 +259,16 @@
             this.panelMid.Controls.Add(this.textBoxCaptcha);
             this.panelMid.Controls.Add(this.label3);
             this.panelMid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelMid.Location = new System.Drawing.Point(5, 199);
+            this.panelMid.Location = new System.Drawing.Point(5, 237);
             this.panelMid.Name = "panelMid";
-            this.panelMid.Size = new System.Drawing.Size(711, 186);
+            this.panelMid.Size = new System.Drawing.Size(711, 147);
             this.panelMid.TabIndex = 1;
             // 
             // labelStep4
             // 
             this.labelStep4.AutoSize = true;
             this.labelStep4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelStep4.Location = new System.Drawing.Point(43, 130);
+            this.labelStep4.Location = new System.Drawing.Point(43, 96);
             this.labelStep4.Name = "labelStep4";
             this.labelStep4.Size = new System.Drawing.Size(20, 17);
             this.labelStep4.TabIndex = 34;
@@ -278,7 +278,7 @@
             // 
             this.labelStep3.AutoSize = true;
             this.labelStep3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelStep3.Location = new System.Drawing.Point(43, 33);
+            this.labelStep3.Location = new System.Drawing.Point(43, 25);
             this.labelStep3.Name = "labelStep3";
             this.labelStep3.Size = new System.Drawing.Size(20, 17);
             this.labelStep3.TabIndex = 34;
@@ -289,7 +289,7 @@
             this.labelInfo.AutoSize = true;
             this.labelInfo.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelInfo.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.labelInfo.Location = new System.Drawing.Point(300, 130);
+            this.labelInfo.Location = new System.Drawing.Point(300, 96);
             this.labelInfo.Name = "labelInfo";
             this.labelInfo.Size = new System.Drawing.Size(324, 19);
             this.labelInfo.TabIndex = 36;
@@ -298,7 +298,7 @@
             // buttonExecute
             // 
             this.buttonExecute.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonExecute.Location = new System.Drawing.Point(64, 121);
+            this.buttonExecute.Location = new System.Drawing.Point(64, 87);
             this.buttonExecute.Name = "buttonExecute";
             this.buttonExecute.Size = new System.Drawing.Size(86, 34);
             this.buttonExecute.TabIndex = 7;
@@ -309,7 +309,7 @@
             // textBoxCaptcha
             // 
             this.textBoxCaptcha.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxCaptcha.Location = new System.Drawing.Point(303, 33);
+            this.textBoxCaptcha.Location = new System.Drawing.Point(303, 25);
             this.textBoxCaptcha.Name = "textBoxCaptcha";
             this.textBoxCaptcha.Size = new System.Drawing.Size(122, 23);
             this.textBoxCaptcha.TabIndex = 5;
@@ -318,7 +318,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(61, 36);
+            this.label3.Location = new System.Drawing.Point(61, 28);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(171, 17);
             this.label3.TabIndex = 29;
@@ -329,9 +329,9 @@
             this.panelBottom.Controls.Add(this.labelUrl);
             this.panelBottom.Controls.Add(this.labelContact);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelBottom.Location = new System.Drawing.Point(5, 393);
+            this.panelBottom.Location = new System.Drawing.Point(5, 392);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(711, 44);
+            this.panelBottom.Size = new System.Drawing.Size(711, 45);
             this.panelBottom.TabIndex = 2;
             // 
             // labelUrl
@@ -375,7 +375,7 @@
             this.pictureBoxLogo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBoxLogo.Image = global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.logo_easyinvoice;
-            this.pictureBoxLogo.Location = new System.Drawing.Point(286, 3);
+            this.pictureBoxLogo.Location = new System.Drawing.Point(286, 20);
             this.pictureBoxLogo.Name = "pictureBoxLogo";
             this.pictureBoxLogo.Size = new System.Drawing.Size(152, 40);
             this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -388,7 +388,7 @@
             this.buttonSelectDataSource.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonSelectDataSource.Image = ((System.Drawing.Image)(resources.GetObject("buttonSelectDataSource.Image")));
             this.buttonSelectDataSource.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.buttonSelectDataSource.Location = new System.Drawing.Point(155, 80);
+            this.buttonSelectDataSource.Location = new System.Drawing.Point(155, 110);
             this.buttonSelectDataSource.Name = "buttonSelectDataSource";
             this.buttonSelectDataSource.Size = new System.Drawing.Size(71, 27);
             this.buttonSelectDataSource.TabIndex = 2;
@@ -401,7 +401,7 @@
             // pictureBoxLoading
             // 
             this.pictureBoxLoading.Image = global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.cat;
-            this.pictureBoxLoading.Location = new System.Drawing.Point(192, 62);
+            this.pictureBoxLoading.Location = new System.Drawing.Point(192, 28);
             this.pictureBoxLoading.Name = "pictureBoxLoading";
             this.pictureBoxLoading.Size = new System.Drawing.Size(111, 94);
             this.pictureBoxLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -413,7 +413,7 @@
             // buttonF5
             // 
             this.buttonF5.Image = ((System.Drawing.Image)(resources.GetObject("buttonF5.Image")));
-            this.buttonF5.Location = new System.Drawing.Point(508, 32);
+            this.buttonF5.Location = new System.Drawing.Point(508, 24);
             this.buttonF5.Name = "buttonF5";
             this.buttonF5.Size = new System.Drawing.Size(31, 28);
             this.buttonF5.TabIndex = 6;
@@ -423,7 +423,7 @@
             // pictureBoxCaptcha
             // 
             this.pictureBoxCaptcha.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxCaptcha.Location = new System.Drawing.Point(538, 33);
+            this.pictureBoxCaptcha.Location = new System.Drawing.Point(538, 25);
             this.pictureBoxCaptcha.Name = "pictureBoxCaptcha";
             this.pictureBoxCaptcha.Size = new System.Drawing.Size(122, 26);
             this.pictureBoxCaptcha.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
