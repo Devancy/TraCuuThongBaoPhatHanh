@@ -103,7 +103,7 @@
             // 
             // tableLayoutPanelInner
             // 
-            this.tableLayoutPanelInner.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Inset;
+            this.tableLayoutPanelInner.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
             this.tableLayoutPanelInner.ColumnCount = 1;
             this.tableLayoutPanelInner.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelInner.Controls.Add(this.panelTop, 0, 0);
@@ -133,10 +133,10 @@
             this.panelTop.Controls.Add(this.dateTimePickerTo);
             this.panelTop.Controls.Add(this.dateTimePickerFrom);
             this.panelTop.Controls.Add(this.buttonSelectDataSource);
-            this.panelTop.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelTop.Location = new System.Drawing.Point(5, 5);
+            this.panelTop.Location = new System.Drawing.Point(11, 11);
+            this.panelTop.Margin = new System.Windows.Forms.Padding(10);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(711, 224);
+            this.panelTop.Size = new System.Drawing.Size(695, 212);
             this.panelTop.TabIndex = 0;
             // 
             // pictureBoxLogo
@@ -144,9 +144,9 @@
             this.pictureBoxLogo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBoxLogo.Image = global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.logo_easyinvoice;
-            this.pictureBoxLogo.Location = new System.Drawing.Point(286, 20);
+            this.pictureBoxLogo.Location = new System.Drawing.Point(256, 20);
             this.pictureBoxLogo.Name = "pictureBoxLogo";
-            this.pictureBoxLogo.Size = new System.Drawing.Size(152, 40);
+            this.pictureBoxLogo.Size = new System.Drawing.Size(166, 40);
             this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxLogo.TabIndex = 36;
             this.pictureBoxLogo.TabStop = false;
@@ -286,10 +286,10 @@
             this.panelMid.Controls.Add(this.textBoxCaptcha);
             this.panelMid.Controls.Add(this.label3);
             this.panelMid.Controls.Add(this.pictureBoxLoading);
-            this.panelMid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelMid.Location = new System.Drawing.Point(5, 237);
+            this.panelMid.Location = new System.Drawing.Point(11, 244);
+            this.panelMid.Margin = new System.Windows.Forms.Padding(10);
             this.panelMid.Name = "panelMid";
-            this.panelMid.Size = new System.Drawing.Size(711, 147);
+            this.panelMid.Size = new System.Drawing.Size(695, 135);
             this.panelMid.TabIndex = 1;
             // 
             // labelStep4
@@ -387,16 +387,16 @@
             // 
             this.panelBottom.Controls.Add(this.labelUrl);
             this.panelBottom.Controls.Add(this.labelContact);
-            this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelBottom.Location = new System.Drawing.Point(5, 392);
+            this.panelBottom.Location = new System.Drawing.Point(11, 400);
+            this.panelBottom.Margin = new System.Windows.Forms.Padding(10);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(711, 45);
+            this.panelBottom.Size = new System.Drawing.Size(695, 31);
             this.panelBottom.TabIndex = 2;
             // 
             // labelUrl
             // 
             this.labelUrl.AutoSize = true;
-            this.labelUrl.Location = new System.Drawing.Point(43, 16);
+            this.labelUrl.Location = new System.Drawing.Point(43, 9);
             this.labelUrl.Name = "labelUrl";
             this.labelUrl.Size = new System.Drawing.Size(109, 13);
             this.labelUrl.TabIndex = 1;
@@ -410,7 +410,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.labelContact.AutoSize = true;
             this.labelContact.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.labelContact.Location = new System.Drawing.Point(460, 16);
+            this.labelContact.Location = new System.Drawing.Point(460, 9);
             this.labelContact.Name = "labelContact";
             this.labelContact.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.labelContact.Size = new System.Drawing.Size(200, 13);
