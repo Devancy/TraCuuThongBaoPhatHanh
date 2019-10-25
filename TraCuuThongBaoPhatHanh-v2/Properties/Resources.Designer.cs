@@ -19,7 +19,7 @@ namespace TraCuuThongBaoPhatHanh_v2.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -71,6 +71,26 @@ namespace TraCuuThongBaoPhatHanh_v2.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap cat {
+            get {
+                object obj = ResourceManager.GetObject("cat", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap fish {
+            get {
+                object obj = ResourceManager.GetObject("fish", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] License {
@@ -83,9 +103,9 @@ namespace TraCuuThongBaoPhatHanh_v2.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Pacman_0_6s_44px {
+        internal static System.Drawing.Bitmap logo_easyinvoice {
             get {
-                object obj = ResourceManager.GetObject("Pacman_0_6s_44px", resourceCulture);
+                object obj = ResourceManager.GetObject("logo_easyinvoice", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -96,16 +116,6 @@ namespace TraCuuThongBaoPhatHanh_v2.Properties {
         internal static System.Drawing.Bitmap refresh_24 {
             get {
                 object obj = ResourceManager.GetObject("refresh_24", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Wedges_3s_44px {
-            get {
-                object obj = ResourceManager.GetObject("Wedges_3s_44px", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

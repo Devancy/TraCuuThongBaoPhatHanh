@@ -34,6 +34,9 @@
             this.panelMain = new System.Windows.Forms.Panel();
             this.tableLayoutPanelInner = new System.Windows.Forms.TableLayoutPanel();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.buttonClearSourcePath = new System.Windows.Forms.Button();
+            this.labelStep2 = new System.Windows.Forms.Label();
+            this.labelStep1 = new System.Windows.Forms.Label();
             this.labelSourcePath = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.labelDateRange = new System.Windows.Forms.Label();
@@ -42,28 +45,28 @@
             this.dateTimePickerTo = new System.Windows.Forms.DateTimePicker();
             this.dateTimePickerFrom = new System.Windows.Forms.DateTimePicker();
             this.panelMid = new System.Windows.Forms.Panel();
+            this.labelStep4 = new System.Windows.Forms.Label();
+            this.labelStep3 = new System.Windows.Forms.Label();
             this.labelInfo = new System.Windows.Forms.Label();
             this.buttonExecute = new System.Windows.Forms.Button();
             this.textBoxCaptcha = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.panelBottom = new System.Windows.Forms.Panel();
-            this.labelVersion = new System.Windows.Forms.Label();
-            this.labelCopyRight = new System.Windows.Forms.Label();
+            this.labelUrl = new System.Windows.Forms.LinkLabel();
+            this.labelContact = new System.Windows.Forms.Label();
             this.textBoxTaxCodeList = new System.Windows.Forms.TextBox();
+            this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
             this.buttonSelectDataSource = new System.Windows.Forms.Button();
             this.pictureBoxLoading = new System.Windows.Forms.PictureBox();
             this.buttonF5 = new System.Windows.Forms.Button();
             this.pictureBoxCaptcha = new System.Windows.Forms.PictureBox();
-            this.labelStep1 = new System.Windows.Forms.Label();
-            this.labelStep2 = new System.Windows.Forms.Label();
-            this.labelStep3 = new System.Windows.Forms.Label();
-            this.labelStep4 = new System.Windows.Forms.Label();
             this.tableLayoutPanel.SuspendLayout();
             this.panelMain.SuspendLayout();
             this.tableLayoutPanelInner.SuspendLayout();
             this.panelTop.SuspendLayout();
             this.panelMid.SuspendLayout();
             this.panelBottom.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLoading)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCaptcha)).BeginInit();
             this.SuspendLayout();
@@ -118,6 +121,8 @@
             // 
             // panelTop
             // 
+            this.panelTop.Controls.Add(this.pictureBoxLogo);
+            this.panelTop.Controls.Add(this.buttonClearSourcePath);
             this.panelTop.Controls.Add(this.labelStep2);
             this.panelTop.Controls.Add(this.labelStep1);
             this.panelTop.Controls.Add(this.labelSourcePath);
@@ -134,13 +139,51 @@
             this.panelTop.Size = new System.Drawing.Size(711, 186);
             this.panelTop.TabIndex = 0;
             // 
+            // buttonClearSourcePath
+            // 
+            this.buttonClearSourcePath.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.buttonClearSourcePath.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+            this.buttonClearSourcePath.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.buttonClearSourcePath.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonClearSourcePath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonClearSourcePath.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.buttonClearSourcePath.Location = new System.Drawing.Point(227, 82);
+            this.buttonClearSourcePath.Name = "buttonClearSourcePath";
+            this.buttonClearSourcePath.Size = new System.Drawing.Size(25, 24);
+            this.buttonClearSourcePath.TabIndex = 35;
+            this.buttonClearSourcePath.Text = "X";
+            this.buttonClearSourcePath.UseVisualStyleBackColor = false;
+            this.buttonClearSourcePath.Visible = false;
+            this.buttonClearSourcePath.Click += new System.EventHandler(this.ButtonClearSourcePath_Click);
+            // 
+            // labelStep2
+            // 
+            this.labelStep2.AutoSize = true;
+            this.labelStep2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelStep2.Location = new System.Drawing.Point(43, 133);
+            this.labelStep2.Name = "labelStep2";
+            this.labelStep2.Size = new System.Drawing.Size(20, 17);
+            this.labelStep2.TabIndex = 34;
+            this.labelStep2.Text = "2.";
+            // 
+            // labelStep1
+            // 
+            this.labelStep1.AutoSize = true;
+            this.labelStep1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelStep1.Location = new System.Drawing.Point(43, 62);
+            this.labelStep1.Name = "labelStep1";
+            this.labelStep1.Size = new System.Drawing.Size(20, 17);
+            this.labelStep1.TabIndex = 34;
+            this.labelStep1.Text = "1.";
+            // 
             // labelSourcePath
             // 
             this.labelSourcePath.AutoSize = true;
-            this.labelSourcePath.Location = new System.Drawing.Point(228, 59);
+            this.labelSourcePath.Location = new System.Drawing.Point(253, 87);
             this.labelSourcePath.Name = "labelSourcePath";
             this.labelSourcePath.Size = new System.Drawing.Size(0, 13);
             this.labelSourcePath.TabIndex = 33;
+            this.labelSourcePath.TextChanged += new System.EventHandler(this.LabelSourcePath_TextChanged);
             // 
             // label1
             // 
@@ -166,7 +209,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(61, 57);
+            this.label2.Location = new System.Drawing.Point(61, 85);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(92, 17);
             this.label2.TabIndex = 31;
@@ -176,7 +219,7 @@
             // 
             this.labelInstruction.AutoSize = true;
             this.labelInstruction.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelInstruction.Location = new System.Drawing.Point(61, 34);
+            this.labelInstruction.Location = new System.Drawing.Point(61, 62);
             this.labelInstruction.Name = "labelInstruction";
             this.labelInstruction.Size = new System.Drawing.Size(498, 17);
             this.labelInstruction.TabIndex = 32;
@@ -190,7 +233,8 @@
             this.dateTimePickerTo.Location = new System.Drawing.Point(538, 128);
             this.dateTimePickerTo.Name = "dateTimePickerTo";
             this.dateTimePickerTo.Size = new System.Drawing.Size(122, 23);
-            this.dateTimePickerTo.TabIndex = 25;
+            this.dateTimePickerTo.TabIndex = 4;
+            this.dateTimePickerTo.TabStop = false;
             // 
             // dateTimePickerFrom
             // 
@@ -200,7 +244,8 @@
             this.dateTimePickerFrom.Location = new System.Drawing.Point(303, 128);
             this.dateTimePickerFrom.Name = "dateTimePickerFrom";
             this.dateTimePickerFrom.Size = new System.Drawing.Size(122, 23);
-            this.dateTimePickerFrom.TabIndex = 26;
+            this.dateTimePickerFrom.TabIndex = 3;
+            this.dateTimePickerFrom.TabStop = false;
             // 
             // panelMid
             // 
@@ -219,16 +264,36 @@
             this.panelMid.Size = new System.Drawing.Size(711, 186);
             this.panelMid.TabIndex = 1;
             // 
+            // labelStep4
+            // 
+            this.labelStep4.AutoSize = true;
+            this.labelStep4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelStep4.Location = new System.Drawing.Point(43, 130);
+            this.labelStep4.Name = "labelStep4";
+            this.labelStep4.Size = new System.Drawing.Size(20, 17);
+            this.labelStep4.TabIndex = 34;
+            this.labelStep4.Text = "4.";
+            // 
+            // labelStep3
+            // 
+            this.labelStep3.AutoSize = true;
+            this.labelStep3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelStep3.Location = new System.Drawing.Point(43, 33);
+            this.labelStep3.Name = "labelStep3";
+            this.labelStep3.Size = new System.Drawing.Size(20, 17);
+            this.labelStep3.TabIndex = 34;
+            this.labelStep3.Text = "3.";
+            // 
             // labelInfo
             // 
             this.labelInfo.AutoSize = true;
-            this.labelInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelInfo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(234)))), ((int)(((byte)(63)))), ((int)(((byte)(52)))));
+            this.labelInfo.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelInfo.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.labelInfo.Location = new System.Drawing.Point(351, 130);
             this.labelInfo.Name = "labelInfo";
-            this.labelInfo.Size = new System.Drawing.Size(20, 17);
+            this.labelInfo.Size = new System.Drawing.Size(324, 19);
             this.labelInfo.TabIndex = 36;
-            this.labelInfo.Text = "...";
+            this.labelInfo.Text = "Đang khởi tạo dịch vụ, vui lòng chờ";
             // 
             // buttonExecute
             // 
@@ -236,7 +301,7 @@
             this.buttonExecute.Location = new System.Drawing.Point(64, 121);
             this.buttonExecute.Name = "buttonExecute";
             this.buttonExecute.Size = new System.Drawing.Size(86, 34);
-            this.buttonExecute.TabIndex = 23;
+            this.buttonExecute.TabIndex = 7;
             this.buttonExecute.Text = "Go";
             this.buttonExecute.UseVisualStyleBackColor = true;
             this.buttonExecute.Click += new System.EventHandler(this.ButtonExecute_Click);
@@ -247,7 +312,7 @@
             this.textBoxCaptcha.Location = new System.Drawing.Point(303, 33);
             this.textBoxCaptcha.Name = "textBoxCaptcha";
             this.textBoxCaptcha.Size = new System.Drawing.Size(122, 23);
-            this.textBoxCaptcha.TabIndex = 22;
+            this.textBoxCaptcha.TabIndex = 5;
             // 
             // label3
             // 
@@ -261,34 +326,38 @@
             // 
             // panelBottom
             // 
-            this.panelBottom.Controls.Add(this.labelVersion);
-            this.panelBottom.Controls.Add(this.labelCopyRight);
+            this.panelBottom.Controls.Add(this.labelUrl);
+            this.panelBottom.Controls.Add(this.labelContact);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelBottom.Location = new System.Drawing.Point(5, 393);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(711, 44);
             this.panelBottom.TabIndex = 2;
             // 
-            // labelVersion
+            // labelUrl
             // 
-            this.labelVersion.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.labelVersion.AutoSize = true;
-            this.labelVersion.Location = new System.Drawing.Point(582, 16);
-            this.labelVersion.Name = "labelVersion";
-            this.labelVersion.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.labelVersion.Size = new System.Drawing.Size(78, 13);
-            this.labelVersion.TabIndex = 0;
-            this.labelVersion.Text = "Version 2.0.0.0";
-            this.labelVersion.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.labelUrl.AutoSize = true;
+            this.labelUrl.Location = new System.Drawing.Point(43, 16);
+            this.labelUrl.Name = "labelUrl";
+            this.labelUrl.Size = new System.Drawing.Size(109, 13);
+            this.labelUrl.TabIndex = 1;
+            this.labelUrl.TabStop = true;
+            this.labelUrl.Text = "http://easyinvoice.vn";
+            this.labelUrl.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LabelUrl_LinkClicked);
             // 
-            // labelCopyRight
+            // labelContact
             // 
-            this.labelCopyRight.AutoSize = true;
-            this.labelCopyRight.Location = new System.Drawing.Point(43, 16);
-            this.labelCopyRight.Name = "labelCopyRight";
-            this.labelCopyRight.Size = new System.Drawing.Size(143, 13);
-            this.labelCopyRight.TabIndex = 0;
-            this.labelCopyRight.Text = "Copyright @ Softdreams JSC";
+            this.labelContact.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelContact.AutoSize = true;
+            this.labelContact.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.labelContact.Location = new System.Drawing.Point(460, 16);
+            this.labelContact.Name = "labelContact";
+            this.labelContact.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.labelContact.Size = new System.Drawing.Size(200, 13);
+            this.labelContact.TabIndex = 0;
+            this.labelContact.Text = "Hỗ trợ và báo lỗi: dieppn@softdreams.vn";
+            this.labelContact.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // textBoxTaxCodeList
             // 
@@ -300,16 +369,29 @@
             this.textBoxTaxCodeList.Size = new System.Drawing.Size(144, 442);
             this.textBoxTaxCodeList.TabIndex = 1;
             // 
+            // pictureBoxLogo
+            // 
+            this.pictureBoxLogo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBoxLogo.Image = global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.logo_easyinvoice;
+            this.pictureBoxLogo.Location = new System.Drawing.Point(286, 3);
+            this.pictureBoxLogo.Name = "pictureBoxLogo";
+            this.pictureBoxLogo.Size = new System.Drawing.Size(152, 40);
+            this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxLogo.TabIndex = 36;
+            this.pictureBoxLogo.TabStop = false;
+            // 
             // buttonSelectDataSource
             // 
             this.buttonSelectDataSource.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.buttonSelectDataSource.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonSelectDataSource.Image = ((System.Drawing.Image)(resources.GetObject("buttonSelectDataSource.Image")));
             this.buttonSelectDataSource.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.buttonSelectDataSource.Location = new System.Drawing.Point(155, 52);
+            this.buttonSelectDataSource.Location = new System.Drawing.Point(155, 80);
             this.buttonSelectDataSource.Name = "buttonSelectDataSource";
             this.buttonSelectDataSource.Size = new System.Drawing.Size(71, 27);
-            this.buttonSelectDataSource.TabIndex = 24;
+            this.buttonSelectDataSource.TabIndex = 2;
+            this.buttonSelectDataSource.TabStop = false;
             this.buttonSelectDataSource.Text = " File ";
             this.buttonSelectDataSource.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonSelectDataSource.UseVisualStyleBackColor = true;
@@ -317,11 +399,11 @@
             // 
             // pictureBoxLoading
             // 
-            this.pictureBoxLoading.Image = global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.Pacman_0_6s_44px;
-            this.pictureBoxLoading.Location = new System.Drawing.Point(303, 122);
+            this.pictureBoxLoading.Image = global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.cat;
+            this.pictureBoxLoading.Location = new System.Drawing.Point(243, 62);
             this.pictureBoxLoading.Name = "pictureBoxLoading";
-            this.pictureBoxLoading.Size = new System.Drawing.Size(51, 34);
-            this.pictureBoxLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBoxLoading.Size = new System.Drawing.Size(111, 94);
+            this.pictureBoxLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxLoading.TabIndex = 35;
             this.pictureBoxLoading.TabStop = false;
             this.pictureBoxLoading.Visible = false;
@@ -332,7 +414,7 @@
             this.buttonF5.Location = new System.Drawing.Point(508, 32);
             this.buttonF5.Name = "buttonF5";
             this.buttonF5.Size = new System.Drawing.Size(31, 28);
-            this.buttonF5.TabIndex = 30;
+            this.buttonF5.TabIndex = 6;
             this.buttonF5.UseVisualStyleBackColor = true;
             this.buttonF5.Click += new System.EventHandler(this.ButtonF5_Click);
             // 
@@ -346,53 +428,15 @@
             this.pictureBoxCaptcha.TabIndex = 21;
             this.pictureBoxCaptcha.TabStop = false;
             // 
-            // labelStep1
-            // 
-            this.labelStep1.AutoSize = true;
-            this.labelStep1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelStep1.Location = new System.Drawing.Point(39, 36);
-            this.labelStep1.Name = "labelStep1";
-            this.labelStep1.Size = new System.Drawing.Size(20, 17);
-            this.labelStep1.TabIndex = 34;
-            this.labelStep1.Text = "1.";
-            // 
-            // labelStep2
-            // 
-            this.labelStep2.AutoSize = true;
-            this.labelStep2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelStep2.Location = new System.Drawing.Point(43, 133);
-            this.labelStep2.Name = "labelStep2";
-            this.labelStep2.Size = new System.Drawing.Size(20, 17);
-            this.labelStep2.TabIndex = 34;
-            this.labelStep2.Text = "2.";
-            // 
-            // labelStep3
-            // 
-            this.labelStep3.AutoSize = true;
-            this.labelStep3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelStep3.Location = new System.Drawing.Point(39, 36);
-            this.labelStep3.Name = "labelStep3";
-            this.labelStep3.Size = new System.Drawing.Size(20, 17);
-            this.labelStep3.TabIndex = 34;
-            this.labelStep3.Text = "3.";
-            // 
-            // labelStep4
-            // 
-            this.labelStep4.AutoSize = true;
-            this.labelStep4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelStep4.Location = new System.Drawing.Point(39, 130);
-            this.labelStep4.Name = "labelStep4";
-            this.labelStep4.Size = new System.Drawing.Size(20, 17);
-            this.labelStep4.TabIndex = 34;
-            this.labelStep4.Text = "4.";
-            // 
             // FormEntry
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(876, 450);
             this.Controls.Add(this.tableLayoutPanel);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "FormEntry";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Tra cứu thông báo phát hành - Easy Invoice";
@@ -409,6 +453,7 @@
             this.panelMid.PerformLayout();
             this.panelBottom.ResumeLayout(false);
             this.panelBottom.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLoading)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCaptcha)).EndInit();
             this.ResumeLayout(false);
@@ -439,12 +484,14 @@
         private System.Windows.Forms.Button buttonF5;
         private System.Windows.Forms.PictureBox pictureBoxLoading;
         private System.Windows.Forms.Label labelInfo;
-        private System.Windows.Forms.Label labelCopyRight;
-        private System.Windows.Forms.Label labelVersion;
+        private System.Windows.Forms.Label labelContact;
         private System.Windows.Forms.Label labelStep2;
         private System.Windows.Forms.Label labelStep1;
         private System.Windows.Forms.Label labelStep4;
         private System.Windows.Forms.Label labelStep3;
+        private System.Windows.Forms.LinkLabel labelUrl;
+        private System.Windows.Forms.Button buttonClearSourcePath;
+        private System.Windows.Forms.PictureBox pictureBoxLogo;
     }
 }
 

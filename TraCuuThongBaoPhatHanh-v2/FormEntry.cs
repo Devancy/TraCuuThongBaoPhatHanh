@@ -825,7 +825,23 @@ namespace TraCuuThongBaoPhatHanh_v2
         {
             Aspose.Cells.License license = new Aspose.Cells.License();
             using (var stream = new MemoryStream(global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.License))
-            license.SetLicense(stream);
+                license.SetLicense(stream);
+        }
+
+        private void LabelUrl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(((LinkLabel)sender).Text);
+        }
+
+        private void LabelSourcePath_TextChanged(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(labelSourcePath.Text))
+                buttonClearSourcePath.Visible = true;
+        }
+
+        private void ButtonClearSourcePath_Click(object sender, EventArgs e)
+        {
+            labelSourcePath.Text = null;
         }
     }
 }
