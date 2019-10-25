@@ -23,7 +23,6 @@ namespace TraCuuThongBaoPhatHanh_v2
         private IWebDriver _driver;
         private CancellationTokenSource _tokenSource = new CancellationTokenSource();
         private readonly string _mainUrl = "http://tracuuhoadon.gdt.gov.vn/tbphtc.html";
-        //private volatile bool _headless = false;
 
 
         private string _token = string.Empty;
@@ -37,6 +36,8 @@ namespace TraCuuThongBaoPhatHanh_v2
 
         private async void FormEntry_Load(object sender, EventArgs e)
         {
+            Program.CheckForUpdate();
+
             dateTimePickerFrom.Value = DateTime.Today.AddYears(-20);
             dateTimePickerTo.Value = DateTime.Today;
             var token = _tokenSource.Token;
