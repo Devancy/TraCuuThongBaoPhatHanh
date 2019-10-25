@@ -542,13 +542,13 @@ namespace TraCuuThongBaoPhatHanh_v2
             detailsSheetData.Columns.Add("STT", typeof(int));
             detailsSheetData.Columns.Add("MST", typeof(string));
             detailsSheetData.Columns.Add("Tên đơn vị", typeof(string));
-            detailsSheetData.Columns.Add("Ngày phát hành", typeof(string));
+            detailsSheetData.Columns.Add("Ngày thông báo", typeof(string));
             detailsSheetData.Columns.Add("Số thông báo", typeof(string));
             detailsSheetData.Columns.Add("Cơ quan thuế quản lý", typeof(string));
             detailsSheetData.Columns.Add("Tên loại hóa đơn", typeof(string));
+            detailsSheetData.Columns.Add("Ngày bắt đầu sử dụng", typeof(string));
             detailsSheetData.Columns.Add("Mẫu số", typeof(string));
             detailsSheetData.Columns.Add("Ký hiệu", typeof(string));
-            detailsSheetData.Columns.Add("Ngày bắt đầu sử dụng", typeof(string));
             detailsSheetData.Columns.Add("Số lượng", typeof(int));
             detailsSheetData.Columns.Add("Từ số", typeof(int));
             detailsSheetData.Columns.Add("Đến số", typeof(int));
@@ -603,18 +603,19 @@ namespace TraCuuThongBaoPhatHanh_v2
                                 row3[4] = releases[index2].so_thong_bao;
                                 row3[5] = releases[index2].cqt_ten;
                                 row3[6] = dtl.ach_ten;
-                                row3[7] = dtl.ach_ma;
-                                row3[8] = dtl.kyhieu;
 
                                 DateTime dateTime;
                                 if (DateTime.TryParse(dtl.ngay_sdung, out dateTime))
                                 {
-                                    row3[9] = dateTime.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+                                    row3[7] = dateTime.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
                                 }
                                 else
                                 {
-                                    row3[9] = dtl.ngay_sdung;
+                                    row3[7] = dtl.ngay_sdung;
                                 }
+
+                                row3[8] = dtl.ach_ma;
+                                row3[9] = dtl.kyhieu;
                                 row3[10] = dtl.soluong;
                                 row3[11] = dtl.tu_so;
                                 row3[12] = dtl.den_so;
