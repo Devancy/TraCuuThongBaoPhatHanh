@@ -34,6 +34,7 @@
             this.panelMain = new System.Windows.Forms.Panel();
             this.tableLayoutPanelInner = new System.Windows.Forms.TableLayoutPanel();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
             this.buttonClearSourcePath = new System.Windows.Forms.Button();
             this.labelStep2 = new System.Windows.Forms.Label();
             this.labelStep1 = new System.Windows.Forms.Label();
@@ -44,31 +45,30 @@
             this.labelInstruction = new System.Windows.Forms.Label();
             this.dateTimePickerTo = new System.Windows.Forms.DateTimePicker();
             this.dateTimePickerFrom = new System.Windows.Forms.DateTimePicker();
+            this.buttonSelectDataSource = new System.Windows.Forms.Button();
             this.panelMid = new System.Windows.Forms.Panel();
             this.labelStep4 = new System.Windows.Forms.Label();
             this.labelStep3 = new System.Windows.Forms.Label();
+            this.pictureBoxLoading = new System.Windows.Forms.PictureBox();
             this.labelInfo = new System.Windows.Forms.Label();
+            this.buttonF5 = new System.Windows.Forms.Button();
             this.buttonExecute = new System.Windows.Forms.Button();
+            this.pictureBoxCaptcha = new System.Windows.Forms.PictureBox();
             this.textBoxCaptcha = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.labelUrl = new System.Windows.Forms.LinkLabel();
             this.labelContact = new System.Windows.Forms.Label();
             this.textBoxTaxCodeList = new System.Windows.Forms.TextBox();
-            this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
-            this.buttonSelectDataSource = new System.Windows.Forms.Button();
-            this.pictureBoxLoading = new System.Windows.Forms.PictureBox();
-            this.buttonF5 = new System.Windows.Forms.Button();
-            this.pictureBoxCaptcha = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel.SuspendLayout();
             this.panelMain.SuspendLayout();
             this.tableLayoutPanelInner.SuspendLayout();
             this.panelTop.SuspendLayout();
-            this.panelMid.SuspendLayout();
-            this.panelBottom.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
+            this.panelMid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLoading)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCaptcha)).BeginInit();
+            this.panelBottom.SuspendLayout();
             this.SuspendLayout();
             // 
             // openFileDialog
@@ -138,6 +138,18 @@
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(711, 224);
             this.panelTop.TabIndex = 0;
+            // 
+            // pictureBoxLogo
+            // 
+            this.pictureBoxLogo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBoxLogo.Image = global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.logo_easyinvoice;
+            this.pictureBoxLogo.Location = new System.Drawing.Point(286, 20);
+            this.pictureBoxLogo.Name = "pictureBoxLogo";
+            this.pictureBoxLogo.Size = new System.Drawing.Size(152, 40);
+            this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxLogo.TabIndex = 36;
+            this.pictureBoxLogo.TabStop = false;
             // 
             // buttonClearSourcePath
             // 
@@ -247,6 +259,22 @@
             this.dateTimePickerFrom.TabIndex = 3;
             this.dateTimePickerFrom.TabStop = false;
             // 
+            // buttonSelectDataSource
+            // 
+            this.buttonSelectDataSource.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.buttonSelectDataSource.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonSelectDataSource.Image = ((System.Drawing.Image)(resources.GetObject("buttonSelectDataSource.Image")));
+            this.buttonSelectDataSource.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.buttonSelectDataSource.Location = new System.Drawing.Point(155, 110);
+            this.buttonSelectDataSource.Name = "buttonSelectDataSource";
+            this.buttonSelectDataSource.Size = new System.Drawing.Size(71, 27);
+            this.buttonSelectDataSource.TabIndex = 2;
+            this.buttonSelectDataSource.TabStop = false;
+            this.buttonSelectDataSource.Text = " File ";
+            this.buttonSelectDataSource.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonSelectDataSource.UseVisualStyleBackColor = true;
+            this.buttonSelectDataSource.Click += new System.EventHandler(this.ButtonSelectDataSource_Click);
+            // 
             // panelMid
             // 
             this.panelMid.Controls.Add(this.labelStep4);
@@ -284,6 +312,17 @@
             this.labelStep3.TabIndex = 34;
             this.labelStep3.Text = "3.";
             // 
+            // pictureBoxLoading
+            // 
+            this.pictureBoxLoading.Image = global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.cat;
+            this.pictureBoxLoading.Location = new System.Drawing.Point(192, 28);
+            this.pictureBoxLoading.Name = "pictureBoxLoading";
+            this.pictureBoxLoading.Size = new System.Drawing.Size(111, 94);
+            this.pictureBoxLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxLoading.TabIndex = 35;
+            this.pictureBoxLoading.TabStop = false;
+            this.pictureBoxLoading.Visible = false;
+            // 
             // labelInfo
             // 
             this.labelInfo.AutoSize = true;
@@ -295,6 +334,16 @@
             this.labelInfo.TabIndex = 36;
             this.labelInfo.Text = "Đang khởi tạo dịch vụ, vui lòng chờ";
             // 
+            // buttonF5
+            // 
+            this.buttonF5.Image = ((System.Drawing.Image)(resources.GetObject("buttonF5.Image")));
+            this.buttonF5.Location = new System.Drawing.Point(508, 24);
+            this.buttonF5.Name = "buttonF5";
+            this.buttonF5.Size = new System.Drawing.Size(31, 28);
+            this.buttonF5.TabIndex = 6;
+            this.buttonF5.UseVisualStyleBackColor = true;
+            this.buttonF5.Click += new System.EventHandler(this.ButtonF5_Click);
+            // 
             // buttonExecute
             // 
             this.buttonExecute.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -305,6 +354,16 @@
             this.buttonExecute.Text = "Go";
             this.buttonExecute.UseVisualStyleBackColor = true;
             this.buttonExecute.Click += new System.EventHandler(this.ButtonExecute_Click);
+            // 
+            // pictureBoxCaptcha
+            // 
+            this.pictureBoxCaptcha.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBoxCaptcha.Location = new System.Drawing.Point(538, 25);
+            this.pictureBoxCaptcha.Name = "pictureBoxCaptcha";
+            this.pictureBoxCaptcha.Size = new System.Drawing.Size(122, 26);
+            this.pictureBoxCaptcha.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBoxCaptcha.TabIndex = 21;
+            this.pictureBoxCaptcha.TabStop = false;
             // 
             // textBoxCaptcha
             // 
@@ -370,65 +429,6 @@
             this.textBoxTaxCodeList.Size = new System.Drawing.Size(144, 442);
             this.textBoxTaxCodeList.TabIndex = 1;
             // 
-            // pictureBoxLogo
-            // 
-            this.pictureBoxLogo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBoxLogo.Image = global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.logo_easyinvoice;
-            this.pictureBoxLogo.Location = new System.Drawing.Point(286, 20);
-            this.pictureBoxLogo.Name = "pictureBoxLogo";
-            this.pictureBoxLogo.Size = new System.Drawing.Size(152, 40);
-            this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxLogo.TabIndex = 36;
-            this.pictureBoxLogo.TabStop = false;
-            // 
-            // buttonSelectDataSource
-            // 
-            this.buttonSelectDataSource.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.buttonSelectDataSource.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonSelectDataSource.Image = ((System.Drawing.Image)(resources.GetObject("buttonSelectDataSource.Image")));
-            this.buttonSelectDataSource.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.buttonSelectDataSource.Location = new System.Drawing.Point(155, 110);
-            this.buttonSelectDataSource.Name = "buttonSelectDataSource";
-            this.buttonSelectDataSource.Size = new System.Drawing.Size(71, 27);
-            this.buttonSelectDataSource.TabIndex = 2;
-            this.buttonSelectDataSource.TabStop = false;
-            this.buttonSelectDataSource.Text = " File ";
-            this.buttonSelectDataSource.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonSelectDataSource.UseVisualStyleBackColor = true;
-            this.buttonSelectDataSource.Click += new System.EventHandler(this.ButtonSelectDataSource_Click);
-            // 
-            // pictureBoxLoading
-            // 
-            this.pictureBoxLoading.Image = global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.cat;
-            this.pictureBoxLoading.Location = new System.Drawing.Point(192, 28);
-            this.pictureBoxLoading.Name = "pictureBoxLoading";
-            this.pictureBoxLoading.Size = new System.Drawing.Size(111, 94);
-            this.pictureBoxLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxLoading.TabIndex = 35;
-            this.pictureBoxLoading.TabStop = false;
-            this.pictureBoxLoading.Visible = false;
-            // 
-            // buttonF5
-            // 
-            this.buttonF5.Image = ((System.Drawing.Image)(resources.GetObject("buttonF5.Image")));
-            this.buttonF5.Location = new System.Drawing.Point(508, 24);
-            this.buttonF5.Name = "buttonF5";
-            this.buttonF5.Size = new System.Drawing.Size(31, 28);
-            this.buttonF5.TabIndex = 6;
-            this.buttonF5.UseVisualStyleBackColor = true;
-            this.buttonF5.Click += new System.EventHandler(this.ButtonF5_Click);
-            // 
-            // pictureBoxCaptcha
-            // 
-            this.pictureBoxCaptcha.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxCaptcha.Location = new System.Drawing.Point(538, 25);
-            this.pictureBoxCaptcha.Name = "pictureBoxCaptcha";
-            this.pictureBoxCaptcha.Size = new System.Drawing.Size(122, 26);
-            this.pictureBoxCaptcha.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBoxCaptcha.TabIndex = 21;
-            this.pictureBoxCaptcha.TabStop = false;
-            // 
             // FormEntry
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -441,7 +441,6 @@
             this.Name = "FormEntry";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Tra cứu thông báo phát hành - Easy Invoice";
-            this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormEntry_FormClosing);
             this.Load += new System.EventHandler(this.FormEntry_Load);
             this.tableLayoutPanel.ResumeLayout(false);
@@ -450,13 +449,13 @@
             this.tableLayoutPanelInner.ResumeLayout(false);
             this.panelTop.ResumeLayout(false);
             this.panelTop.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).EndInit();
             this.panelMid.ResumeLayout(false);
             this.panelMid.PerformLayout();
-            this.panelBottom.ResumeLayout(false);
-            this.panelBottom.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLoading)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCaptcha)).EndInit();
+            this.panelBottom.ResumeLayout(false);
+            this.panelBottom.PerformLayout();
             this.ResumeLayout(false);
 
         }
