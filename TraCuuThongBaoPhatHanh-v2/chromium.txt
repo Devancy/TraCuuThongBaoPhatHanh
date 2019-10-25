@@ -1,0 +1,1 @@
+﻿https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Win%2F676760%2Fchrome-win.zip?generation=1562910729402389&alt=media

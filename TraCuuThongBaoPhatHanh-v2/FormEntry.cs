@@ -1,6 +1,6 @@
-﻿using Aspose.Cells;
-using Microsoft.Win32;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using OfficeOpenXml;
+using OfficeOpenXml.Table;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
@@ -33,7 +33,6 @@ namespace TraCuuThongBaoPhatHanh_v2
         public FormEntry()
         {
             InitializeComponent();
-            Run();
         }
 
         private async void FormEntry_Load(object sender, EventArgs e)
@@ -71,7 +70,7 @@ namespace TraCuuThongBaoPhatHanh_v2
             chromeDriverService.HideCommandPromptWindow = true;
             var option = new ChromeOptions();
             // chrome 77: https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Win%2F676760%2Fchrome-win.zip?generation=1562910729402389&alt=media
-            // option.BinaryLocation = "./chrome-win/chrome.exe";
+            option.BinaryLocation = "./chrome-win/chrome.exe";
             if (headless)
             {
                 //option.AddArguments("--headless", "--no-sandbox", "--disable-web-security", "--disable-gpu", "--incognito", "--proxy-bypass-list=*", "--proxy-server='direct://'", "--log-level=3", "--hide-scrollbars");
@@ -313,13 +312,6 @@ namespace TraCuuThongBaoPhatHanh_v2
             });
         }
 
-        public static void Run()
-        {
-            Aspose.Cells.License license = new Aspose.Cells.License();
-            using (var stream = new MemoryStream(global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.License))
-                license.SetLicense(stream);
-        }
-
         private void LabelUrl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start(((LinkLabel)sender).Text);
@@ -338,94 +330,82 @@ namespace TraCuuThongBaoPhatHanh_v2
 
         //--------------------------------
         #region worker
-        public string ExportDataToExcel(List<TINResponse> data, string exportDirectory)
+        private string ExportDataToExcel(IReadOnlyList<TINResponse> data, string exportDirectory)
         {
-            DataTable dataTable = new DataTable("Result");
             DataTable masterData = new DataTable("Master");
-            DataTable detailData = new DataTable("Detail");
-            BuildDataToExport(data, ref masterData, ref detailData);
+            DataTable detailsData = new DataTable("Detail");
+            BuildDataToExport(data, ref masterData, ref detailsData);
             string directoryName = Path.GetDirectoryName(exportDirectory);
-            string fileName = Path.Combine(directoryName, $"KetQua_{DateTime.Now:dd.MM.yyyy_hh.mm.ss}.xlsx");
-            ImportTableOptions options = new ImportTableOptions { IsFieldNameShown = true, IsHtmlString = true };
-            Workbook workbook = new Workbook();
+            string fileName = Path.Combine(directoryName, $"EasyInvoice_KetQua_{DateTime.Now:dd.MM.yyyy_hh.mm.ss}.xlsx");
 
-            Worksheet worksheet1 = workbook.Worksheets[0];
-            worksheet1.Name = "Company";
-            worksheet1.Cells.ImportData(masterData, 0, 0, options);
-            Aspose.Cells.Cells cells = worksheet1.Cells;
-            cells.Merge(0, 6, 1, 2);
-            cells.Merge(0, 8, 1, 2);
-            cells.Merge(0, 10, 1, 2);
-            worksheet1.Cells.Rows[0].Style.Font.IsBold = true;
-            worksheet1.Cells.Rows[0].Style.BackgroundColor = Color.Cyan;
-            worksheet1.Cells.Rows[1].Style.Font.IsBold = true;
-            worksheet1.AutoFitRows();
-            worksheet1.AutoFitColumns();
-            Worksheet worksheet2 = workbook.Worksheets.Add("Details");
-            worksheet2.Cells.ImportData(detailData, 0, 0, options);
-            worksheet2.Cells.Rows[0].Style.Font.IsBold = true;
-            worksheet2.Cells.Rows[0].Style.BackgroundColor = Color.Cyan;
-            worksheet2.Cells.Rows[1].Style.Font.IsBold = true;
-            worksheet2.AutoFitRows();
-            worksheet2.AutoFitColumns();
-            workbook.Settings.FirstVisibleTab = 0;
-            try
+            using (var excelPackage = new ExcelPackage())
             {
-                workbook.Save(fileName);
-            }
-            catch (Exception ex)
-            {
-                BridgePopupMessage(ex.ToString());
-                fileName = null;
+                //Set some properties of the Excel document
+                excelPackage.Workbook.Properties.Author = "http://easyinvoice.vn";
+                excelPackage.Workbook.Properties.Title = "Easy Invoice - Chi tiết thông báo phát hành hoá đơn điện tử của doanh nghiệp";
+                excelPackage.Workbook.Properties.Subject = "Exported automatically by Easy Invoice";
+                excelPackage.Workbook.Properties.Created = DateTime.Now;
+
+                //Create the WorkSheet
+                ExcelWorksheet worksheetCompany = excelPackage.Workbook.Worksheets.Add("Company");
+                worksheetCompany.Cells["A1"].LoadFromDataTable(masterData, true, TableStyles.Dark9);
+                worksheetCompany.Cells[worksheetCompany.Dimension.Address].AutoFitColumns();
+
+                ExcelWorksheet worksheetDetails = excelPackage.Workbook.Worksheets.Add("Details");
+                worksheetDetails.Cells["A1"].LoadFromDataTable(detailsData, true, TableStyles.Dark9);
+                worksheetDetails.Cells[worksheetDetails.Dimension.Address].AutoFitColumns();
+
+                excelPackage.Workbook.Worksheets.Add("Easy Invoice");
+
+                FileInfo fi = new FileInfo(fileName);
+                excelPackage.SaveAs(fi);
             }
 
             return fileName;
         }
 
-        private void BuildDataToExport(IReadOnlyList<TINResponse> data, ref DataTable masterData, ref DataTable detailData)
+        private void BuildDataToExport(IReadOnlyList<TINResponse> data, ref DataTable masterSheetData, ref DataTable detailsSheetData)
         {
-            masterData.Columns.Add("STT", typeof(int));
-            masterData.Columns.Add("MST", typeof(string));
-            masterData.Columns.Add("Tên đơn vị", typeof(string));
-            masterData.Columns.Add("Điện thoại", typeof(string));
-            masterData.Columns.Add("Địa chỉ", typeof(string));
-            masterData.Columns.Add("Thủ trưởng đơn vị", typeof(string));
+            masterSheetData.Columns.Add("STT", typeof(int));
+            masterSheetData.Columns.Add("MST", typeof(string));
+            masterSheetData.Columns.Add("Tên đơn vị", typeof(string));
+            masterSheetData.Columns.Add("Điện thoại", typeof(string));
+            masterSheetData.Columns.Add("Địa chỉ", typeof(string));
+            masterSheetData.Columns.Add("Thủ trưởng đơn vị", typeof(string));
             DateTime now = DateTime.Now;
-            masterData.Columns.Add((now.Year - 2).ToString(), typeof(string));
-            masterData.Columns.Add("year2", typeof(string));
-            masterData.Columns.Add((now.Year - 1).ToString(), typeof(string));
-            masterData.Columns.Add("year1", typeof(string));
-            masterData.Columns.Add(now.Year.ToString(), typeof(string));
-            masterData.Columns.Add("year", typeof(string));
-            masterData.Columns.Add("Nhà cung cấp HĐĐT gần nhất", typeof(string));
-            DataRow row1 = masterData.NewRow();
-            string str1 = "Hóa đơn giấy";
-            string str2 = "Hóa đơn điện tử";
-            row1[6] = row1[8] = row1[10] = str1;
-            row1[7] = row1[9] = row1[11] = str2;
-            masterData.Rows.Add(row1);
-            detailData.Columns.Add("STT", typeof(int));
-            detailData.Columns.Add("MST", typeof(string));
-            detailData.Columns.Add("Ngày phát hành", typeof(string));
-            detailData.Columns.Add("Số thông báo", typeof(string));
-            detailData.Columns.Add("Cơ quan thuế quản lý", typeof(string));
-            detailData.Columns.Add("Tên loại hóa đơn", typeof(string));
-            detailData.Columns.Add("Mẫu số", typeof(string));
-            detailData.Columns.Add("Kí hiệu", typeof(string));
-            detailData.Columns.Add("Số lượng", typeof(int));
-            detailData.Columns.Add("Từ số", typeof(int));
-            detailData.Columns.Add("Đến số", typeof(int));
-            detailData.Columns.Add("Ngày bắt đầu sử dụng", typeof(string));
-            detailData.Columns.Add("Đã sử dụng", typeof(int));
-            detailData.Columns.Add("Doanh nghiệp in", typeof(string));
-            detailData.Columns.Add("Mã số thuế", typeof(string));
-            detailData.Columns.Add("Hợp đồng đặt in số", typeof(string));
-            detailData.Columns.Add("Hợp đồng đặt in ngày", typeof(string));
-            detailData.Columns.Add("Link", typeof(string));
+            masterSheetData.Columns.Add((now.Year - 2).ToString(), typeof(string));
+            masterSheetData.Columns.Add($"{(now.Year - 2)}E", typeof(string));
+            masterSheetData.Columns.Add((now.Year - 1).ToString(), typeof(string));
+            masterSheetData.Columns.Add($"{(now.Year - 1)}E", typeof(string));
+            masterSheetData.Columns.Add(now.Year.ToString(), typeof(string));
+            masterSheetData.Columns.Add($"{now.Year}E", typeof(string));
+            masterSheetData.Columns.Add("Nhà cung cấp HĐĐT gần nhất", typeof(string));
+            //DataRow row1 = masterSheetData.NewRow();
+            //row1[6] = row1[8] = row1[10] = "Hóa đơn giấy";
+            //row1[7] = row1[9] = row1[11] = "Hóa đơn điện tử";
+            //masterSheetData.Rows.Add(row1);
+            detailsSheetData.Columns.Add("STT", typeof(int));
+            detailsSheetData.Columns.Add("MST", typeof(string));
+            detailsSheetData.Columns.Add("Ngày phát hành", typeof(string));
+            detailsSheetData.Columns.Add("Số thông báo", typeof(string));
+            detailsSheetData.Columns.Add("Cơ quan thuế quản lý", typeof(string));
+            detailsSheetData.Columns.Add("Tên loại hóa đơn", typeof(string));
+            detailsSheetData.Columns.Add("Mẫu số", typeof(string));
+            detailsSheetData.Columns.Add("Kí hiệu", typeof(string));
+            detailsSheetData.Columns.Add("Số lượng", typeof(int));
+            detailsSheetData.Columns.Add("Từ số", typeof(int));
+            detailsSheetData.Columns.Add("Đến số", typeof(int));
+            detailsSheetData.Columns.Add("Ngày bắt đầu sử dụng", typeof(string));
+            detailsSheetData.Columns.Add("Đã sử dụng", typeof(int));
+            detailsSheetData.Columns.Add("Doanh nghiệp in", typeof(string));
+            detailsSheetData.Columns.Add("Mã số thuế", typeof(string));
+            detailsSheetData.Columns.Add("Hợp đồng đặt in số", typeof(string));
+            detailsSheetData.Columns.Add("Hợp đồng đặt in ngày", typeof(string));
+            detailsSheetData.Columns.Add("Link", typeof(string));
             int num1 = 1;
             for (int index1 = 0; index1 < data.Count; ++index1)
             {
-                DataRow row2 = masterData.NewRow();
+                DataRow row2 = masterSheetData.NewRow();
                 row2[0] = index1 + 1;
                 int year = DateTime.Now.Year;
                 int num2 = year - 1;
@@ -439,9 +419,7 @@ namespace TraCuuThongBaoPhatHanh_v2
                 StringBuilder stringBuilder = new StringBuilder();
                 if (data[index1].Releases != null)
                 {
-                    List<Release> releaseList = new List<Release>();
                     List<Release> releases = data[index1].Releases;
-                    Release release1 = new Release();
                     Release release2 = data[index1].Releases.Last<Release>();
                     try
                     {
@@ -459,10 +437,9 @@ namespace TraCuuThongBaoPhatHanh_v2
                     {
                         if (releases[index2].dtls != null)
                         {
-                            List<ReleaseDetail> releaseDetailList = new List<ReleaseDetail>();
                             foreach (ReleaseDetail dtl in releases[index2].dtls)
                             {
-                                DataRow row3 = detailData.NewRow();
+                                DataRow row3 = detailsSheetData.NewRow();
                                 row3[0] = num1;
                                 row3[1] = releases[index2].dtnt_tin;
                                 row3[2] = releases[index2].ngay_phathanh;
@@ -501,8 +478,8 @@ namespace TraCuuThongBaoPhatHanh_v2
                                         num9 += dtl.soluong.Value;
                                 }
                                 if (dtl.kyhieu.Last<char>().ToString().ToLower() == "e" && !string.IsNullOrWhiteSpace(dtl.nin_ten))
-                                    stringBuilder.Append(string.Format("\n{0}", dtl.nin_ten));
-                                detailData.Rows.Add(row3);
+                                    stringBuilder.Append($"\n{dtl.nin_ten}");
+                                detailsSheetData.Rows.Add(row3);
                                 ++num1;
                             }
                         }
@@ -520,7 +497,7 @@ namespace TraCuuThongBaoPhatHanh_v2
                     row2[1] = data[index1].tin;
                     row2[2] = "Không tìm thấy kết quả tra cứu";
                 }
-                masterData.Rows.Add(row2);
+                masterSheetData.Rows.Add(row2);
             }
         }
 
@@ -844,10 +821,5 @@ namespace TraCuuThongBaoPhatHanh_v2
         }
 
         #endregion
-
-        private void pictureBoxLoading_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

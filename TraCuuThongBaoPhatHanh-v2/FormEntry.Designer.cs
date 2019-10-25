@@ -408,7 +408,6 @@
             this.pictureBoxLoading.TabIndex = 35;
             this.pictureBoxLoading.TabStop = false;
             this.pictureBoxLoading.Visible = false;
-            this.pictureBoxLoading.Click += new System.EventHandler(this.pictureBoxLoading_Click);
             // 
             // buttonF5
             // 
