@@ -52,7 +52,7 @@ namespace TraCuuThongBaoPhatHanh_v2
         {
             Program.CheckForUpdate();
 
-            textBoxTaxCodeList.Text = "0101540844";
+            textBoxTaxCodeList.Text = "0106457847";
             dateTimePickerFrom.Value = DateTime.Today.AddYears(-10);
             dateTimePickerTo.Value = DateTime.Today;
             var token = _tokenSource.Token;
@@ -182,7 +182,7 @@ namespace TraCuuThongBaoPhatHanh_v2
             try
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
-                _cookies = null;
+                //_cookies = null;
 
                 _output = !string.IsNullOrWhiteSpace(labelSourcePath.Text) ? labelSourcePath.Text : AppDomain.CurrentDomain.BaseDirectory + "Output";
                 List<TINResponse> data = new List<TINResponse>();
@@ -372,9 +372,16 @@ namespace TraCuuThongBaoPhatHanh_v2
             Task.Run(() =>
             {
                 ShowProgress("Đang lấy mã captcha");
-                var captchaFile = Path.Combine(_baseDir, "Captcha.jpg");
+                //var captchaFile = Path.Combine(_baseDir, "Captcha.jpg");
 
                 var html = GetRequest("http://tracuuhoadon.gdt.gov.vn/tbphtc.html"); // init cookies
+
+                //Invoker((MethodInvoker)(() =>
+                //{
+                //    pictureBoxCaptcha.Image = null;
+                //}));
+
+                var captchaFile = DownloadRemoteImageFile("http://tracuuhoadon.gdt.gov.vn/Captcha.jpg");
                 // TODO parse html to get <input type="hidden" name="struts.token.name" value="token" />,...
                 var doc = new HtmlAgilityPack.HtmlDocument();
                 doc.LoadHtml(html);
@@ -382,7 +389,7 @@ namespace TraCuuThongBaoPhatHanh_v2
                 var token = "";
                 var as_sfid = "";
                 var as_fid = "";
-                var nd = DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+                var nd = (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
                 foreach (HtmlNode htmlNode in hiddenFields)
                 {
                     if (htmlNode.Attributes["name"].Value == "token")
@@ -393,9 +400,9 @@ namespace TraCuuThongBaoPhatHanh_v2
                         as_fid = htmlNode.Attributes["value"].Value;
                 }
                 string queryParams = $"none.html?tin=&ngayTu=&ngayDen=&captchaCodeVerify=&struts.token.name=token&token={token}&as_sfid={as_sfid}&as_fid={as_fid}&_search=false&nd={nd}&rows=10&page=1&sidx=&sord=asc&_={nd + 361}";
-                var test = GetRequest("http://tracuuhoadon.gdt.gov.vn/tbphtc.html" + queryParams);
+                var test = GetRequest("http://tracuuhoadon.gdt.gov.vn/" + queryParams);
 
-                DownloadRemoteImageFile("http://tracuuhoadon.gdt.gov.vn/Captcha.jpg", captchaFile);
+                
 
 
                 //var client = new RestClient("http://tracuuhoadon.gdt.gov.vn/");
@@ -856,7 +863,7 @@ namespace TraCuuThongBaoPhatHanh_v2
             double totalMilliseconds = DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
             if (!string.IsNullOrEmpty(GetNewToken()))
             {
-                string tbph = GetRequest($"http://www.tracuuhoadon.gdt.gov.vn/searchtbph.html?_search=false&nd={totalMilliseconds}&rows=1000&page={page}&sidx=&sord=asc&kind={kind}&tin={taxCode}&ngayTu={fromDate}&ngayDen={toDate}&captchaCode={captchaCode}&token={_token}&struts.token.name=token&_={_tokenName}");
+                string tbph = GetRequest($"http://www.tracuuhoadon.gdt.gov.vn/" + $"searchtbph.html?_search=false&nd={totalMilliseconds}&rows=1000&page={page}&sidx=&sord=asc&kind={kind}&tin={taxCode}&ngayTu={fromDate}&ngayDen={toDate}&captchaCode={captchaCode}&token={_token}&struts.token.name=token&_={_tokenName}");
                 if (!IsValidJson(tbph))
                     throw new InvalidResponseJsonException(tbph);
 
@@ -897,8 +904,8 @@ namespace TraCuuThongBaoPhatHanh_v2
             byte[] bytes = Encoding.UTF8.GetBytes(data);
             httpWebRequest.ContentType = "application/json;charset=UTF-8";
             httpWebRequest.ContentLength = bytes.Length;
-            if (_cookies == null)
-                GetCookies();
+            //if (_cookies == null)
+            //    GetCookies();
             httpWebRequest.CookieContainer = new CookieContainer();
             httpWebRequest.CookieContainer.Add(_cookies);
             Stream requestStream = httpWebRequest.GetRequestStream();
@@ -923,8 +930,8 @@ namespace TraCuuThongBaoPhatHanh_v2
             byte[] bytes = Encoding.UTF8.GetBytes(postData);
             httpWebRequest.ContentType = "application/x-www-form-urlencoded; charset=UTF-8";
             httpWebRequest.ContentLength = bytes.Length;
-            if (_cookies == null)
-                GetCookies();
+            //if (_cookies == null)
+            //    GetCookies();
             httpWebRequest.CookieContainer = new CookieContainer();
             httpWebRequest.CookieContainer.Add(_cookies);
             Stream requestStream = httpWebRequest.GetRequestStream();
@@ -953,7 +960,7 @@ namespace TraCuuThongBaoPhatHanh_v2
 
             using (HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse())
             {
-                _cookies = httpWebRequest.CookieContainer.GetCookies(httpWebRequest.RequestUri);
+                //_cookies = httpWebRequest.CookieContainer.GetCookies(httpWebRequest.RequestUri);
                 UpdateCookie(response);
                 using (var responseStream = response.GetResponseStream())
                 using (var streamReader = new StreamReader(responseStream))
@@ -964,12 +971,59 @@ namespace TraCuuThongBaoPhatHanh_v2
             }
         }
 
+        private string DownloadRemoteImageFile(string uri)
+        {
+            var fileName = Path.GetTempFileName();
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            request.CookieContainer = new CookieContainer();
+            request.CookieContainer.Add(_cookies);
+            HttpWebResponse response;
+            try
+            {
+                response = (HttpWebResponse)request.GetResponse();
+                UpdateCookie(response);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            // Check that the remote file was found. The ContentType
+            // check is performed since a request for a non-existent
+            // image file might be redirected to a 404-page, which would
+            // yield the StatusCode "OK", even though the image was not
+            // found.
+            if ((response.StatusCode == HttpStatusCode.OK
+                 || response.StatusCode == HttpStatusCode.Moved
+                 || response.StatusCode == HttpStatusCode.Redirect)
+                /*&& response.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase)*/)
+            {
+
+                // if the remote file was found, download it
+                using (Stream inputStream = response.GetResponseStream())
+                using (Stream outputStream = File.OpenWrite(fileName))
+                {
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    do
+                    {
+                        bytesRead = inputStream.Read(buffer, 0, buffer.Length);
+                        outputStream.Write(buffer, 0, bytesRead);
+                    } while (bytesRead != 0);
+                }
+                return fileName;
+            }
+            return null;
+        }
+
         private bool DownloadRemoteImageFile(string uri, string fileName)
         {
             File.Delete(fileName);
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
             request.CookieContainer = new CookieContainer();
+            request.CookieContainer.Add(_cookies);
             HttpWebResponse response;
             try
             {
@@ -1018,6 +1072,8 @@ namespace TraCuuThongBaoPhatHanh_v2
                 var originCookies = _cookies.Cast<System.Net.Cookie>().ToArray();
                 foreach (System.Net.Cookie cookie in originCookies)
                 {
+                    if (cookie.Name == "SCOUTER")
+                        continue;
                     var match = responseCookies.FirstOrDefault(_ => _.Name == cookie.Name);
                     if (match != null)
                         cookie.Value = match.Value;
