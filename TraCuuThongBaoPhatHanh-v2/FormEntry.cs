@@ -20,6 +20,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using HtmlAgilityPack;
+using RestSharp;
+using RestSharp.Extensions;
 
 namespace TraCuuThongBaoPhatHanh_v2
 {
@@ -28,6 +31,7 @@ namespace TraCuuThongBaoPhatHanh_v2
         private IWebDriver _driver;
         private CancellationTokenSource _tokenSource = new CancellationTokenSource();
         private readonly string _mainUrl = "http://tracuuhoadon.gdt.gov.vn/tbphtc.html";
+        private readonly string _baseDir = AppDomain.CurrentDomain.BaseDirectory;
 
 
         private string _token = string.Empty;
@@ -48,6 +52,7 @@ namespace TraCuuThongBaoPhatHanh_v2
         {
             Program.CheckForUpdate();
 
+            textBoxTaxCodeList.Text = "0101540844";
             dateTimePickerFrom.Value = DateTime.Today.AddYears(-10);
             dateTimePickerTo.Value = DateTime.Today;
             var token = _tokenSource.Token;
@@ -278,7 +283,7 @@ namespace TraCuuThongBaoPhatHanh_v2
             labelSourcePath.Text = openFileDialog.FileName;
         }
 
-        private void ButtonF5_Click(object sender, EventArgs e)
+        private void ButtonF5_Click1(object sender, EventArgs e)
         {
             Task.Run(() =>
             {
@@ -357,6 +362,75 @@ namespace TraCuuThongBaoPhatHanh_v2
                     }
 
                 } while (string.IsNullOrWhiteSpace(captchaBase64));
+
+                HideProgress();
+            });
+        }
+
+        private void ButtonF5_Click(object sender, EventArgs e)
+        {
+            Task.Run(() =>
+            {
+                ShowProgress("Đang lấy mã captcha");
+                var captchaFile = Path.Combine(_baseDir, "Captcha.jpg");
+
+                var html = GetRequest("http://tracuuhoadon.gdt.gov.vn/tbphtc.html"); // init cookies
+                // TODO parse html to get <input type="hidden" name="struts.token.name" value="token" />,...
+                var doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(html);
+                var hiddenFields = doc.DocumentNode.SelectNodes("//*[@id='tbphcqtform']/input");
+                var token = "";
+                var as_sfid = "";
+                var as_fid = "";
+                var nd = DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+                foreach (HtmlNode htmlNode in hiddenFields)
+                {
+                    if (htmlNode.Attributes["name"].Value == "token")
+                        token = htmlNode.Attributes["value"].Value;
+                    if (htmlNode.Attributes["name"].Value == "as_sfid")
+                        as_sfid = htmlNode.Attributes["value"].Value;
+                    if (htmlNode.Attributes["name"].Value == "as_fid")
+                        as_fid = htmlNode.Attributes["value"].Value;
+                }
+                string queryParams = $"none.html?tin=&ngayTu=&ngayDen=&captchaCodeVerify=&struts.token.name=token&token={token}&as_sfid={as_sfid}&as_fid={as_fid}&_search=false&nd={nd}&rows=10&page=1&sidx=&sord=asc&_={nd + 361}";
+                var test = GetRequest("http://tracuuhoadon.gdt.gov.vn/tbphtc.html" + queryParams);
+
+                DownloadRemoteImageFile("http://tracuuhoadon.gdt.gov.vn/Captcha.jpg", captchaFile);
+
+
+                //var client = new RestClient("http://tracuuhoadon.gdt.gov.vn/");
+                //client.CookieContainer = new CookieContainer();
+                //client.Execute(new RestRequest("tbphtc.html", Method.GET));
+                //_cookies = client.CookieContainer.GetCookies(client.BaseUrl);
+
+                //client.DownloadData(new RestRequest("Captcha.jpg", Method.GET)).SaveAs(captchaFile);
+                //var newCookies = client.CookieContainer.GetCookies(client.BaseUrl);
+                //UpdateCookie(newCookies);
+
+                Invoker((MethodInvoker)(() =>
+                {
+                    pictureBoxCaptcha.Image = Image.FromFile(captchaFile);
+                }));
+
+                if (_autoCaptcha)
+                {
+                    try
+                    {
+                        var captchaText = Ocr.ImageOcrToText(captchaFile);
+                        captchaText = Regex.Replace(captchaText, "[^0-9a-zA-Z]", "");
+                        Invoker((MethodInvoker)(() =>
+                        {
+                            textBoxCaptcha.Text = captchaText;
+                        }));
+                    }
+                    catch (Exception ex)
+                    {
+                        LogException(ex);
+                        _autoCaptcha = false;
+                        UpdateAppConfigAppSettings("auto-captcha", "0");
+                        BridgePopupMessage("Máy tính không hỗ trợ captcha tự động, vui lòng nhập thủ công");
+                    }
+                }
 
                 HideProgress();
             });
@@ -873,11 +947,13 @@ namespace TraCuuThongBaoPhatHanh_v2
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequest.Method = "GET";
             if (_cookies == null)
-                GetCookies();
+                InitCookies(null);
             httpWebRequest.CookieContainer = new CookieContainer();
             httpWebRequest.CookieContainer.Add(_cookies);
+
             using (HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse())
             {
+                _cookies = httpWebRequest.CookieContainer.GetCookies(httpWebRequest.RequestUri);
                 UpdateCookie(response);
                 using (var responseStream = response.GetResponseStream())
                 using (var streamReader = new StreamReader(responseStream))
@@ -888,14 +964,17 @@ namespace TraCuuThongBaoPhatHanh_v2
             }
         }
 
-        private static bool DownloadRemoteImageFile(string uri, string fileName)
+        private bool DownloadRemoteImageFile(string uri, string fileName)
         {
+            File.Delete(fileName);
+
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
             request.CookieContainer = new CookieContainer();
             HttpWebResponse response;
             try
             {
                 response = (HttpWebResponse)request.GetResponse();
+                UpdateCookie(response);
             }
             catch (Exception)
             {
@@ -932,7 +1011,31 @@ namespace TraCuuThongBaoPhatHanh_v2
 
         private void UpdateCookie(HttpWebResponse response)
         {
-            var responseCookies = response.Cookies.Cast<System.Net.Cookie>().ToArray();
+            var resultCookie = new CookieCollection();
+            if (_cookies != null && _cookies.Count > 0)
+            {
+                var responseCookies = response.Cookies.Cast<System.Net.Cookie>().ToArray();
+                var originCookies = _cookies.Cast<System.Net.Cookie>().ToArray();
+                foreach (System.Net.Cookie cookie in originCookies)
+                {
+                    var match = responseCookies.FirstOrDefault(_ => _.Name == cookie.Name);
+                    if (match != null)
+                        cookie.Value = match.Value;
+                    resultCookie.Add(cookie);
+                } 
+            }
+            else
+            {
+                resultCookie = response.Cookies;
+            }
+
+            _cookies = resultCookie;
+            //return resultCookie;
+        }
+
+        private void UpdateCookie(CookieCollection aCookies)
+        {
+            var responseCookies = aCookies.Cast<System.Net.Cookie>().ToArray();
             var originCookies = _cookies.Cast<System.Net.Cookie>().ToArray();
             var resultCookie = new CookieCollection();
             foreach (System.Net.Cookie cookie in originCookies)
@@ -957,6 +1060,12 @@ namespace TraCuuThongBaoPhatHanh_v2
             }
             _cookies = cookieCollection;
             return cookieCollection;
+        }
+
+        public CookieCollection InitCookies(HttpWebResponse response)
+        {
+            _cookies = response != null ? response.Cookies : new CookieCollection();
+            return _cookies;
         }
 
         private void LogException(Exception ex)

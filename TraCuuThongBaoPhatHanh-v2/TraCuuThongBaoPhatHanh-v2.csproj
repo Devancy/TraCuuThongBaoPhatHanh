@@ -177,8 +177,14 @@
     <PackageReference Include="EPPlus">
       <Version>4.5.3.2</Version>
     </PackageReference>
+    <PackageReference Include="HtmlAgilityPack">
+      <Version>1.11.16</Version>
+    </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>10.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="RestSharp">
+      <Version>105.2.3</Version>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver">
       <Version>3.141.0</Version>
