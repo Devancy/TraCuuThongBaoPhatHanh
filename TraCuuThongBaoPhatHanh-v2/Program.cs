@@ -25,7 +25,7 @@ namespace TraCuuThongBaoPhatHanh_v2
                 AutoUpdater.RunUpdateAsAdmin = false;
                 AutoUpdater.UpdateFormSize = new System.Drawing.Size(800, 600);
 
-                AutoUpdater.Start("https://raw.githubusercontent.com/Devancy/TraCuuThongBaoPhatHanh/master/TraCuuThongBaoPhatHanh/Deploy/AutoUpdater2.xml");
+                AutoUpdater.Start("https://raw.githubusercontent.com/Devancy/TraCuuThongBaoPhatHanh/master/Deploy/2/AutoUpdater.xml");
             }
         }
     }
