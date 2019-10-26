@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AutoUpdaterDotNET;
+using System;
+using System.Reflection;
 using System.Windows.Forms;
-using AutoUpdaterDotNET;
 
 namespace TraCuuThongBaoPhatHanh_v2
 {
     static class Program
     {
+        internal static readonly Version Version = new AssemblyName(Assembly.GetExecutingAssembly().FullName).Version;
         /// <summary>
         /// The main entry point for the application.
         /// </summary>

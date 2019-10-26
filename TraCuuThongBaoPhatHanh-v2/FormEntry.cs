@@ -41,6 +41,7 @@ namespace TraCuuThongBaoPhatHanh_v2
         public FormEntry()
         {
             InitializeComponent();
+            this.Text = this.Text + $" [Version {Program.Version}]";
         }
 
         private async void FormEntry_Load(object sender, EventArgs e)
@@ -83,7 +84,7 @@ namespace TraCuuThongBaoPhatHanh_v2
             Application.Exit();
         }
 
-        private ChromeDriver InitializeChrome(bool headless = true)
+        private static ChromeDriver InitializeChrome(bool headless = true)
         {
             var chromeDriverService = ChromeDriverService.CreateDefaultService();
             chromeDriverService.HideCommandPromptWindow = true;
@@ -797,7 +798,7 @@ namespace TraCuuThongBaoPhatHanh_v2
         {
             ReleaseDetailResponse releaseDetailResponse = new ReleaseDetailResponse();
             if (!ltd.HasValue)
-                ltd = new int?(0);
+                ltd = 0;
             string paramz = $"id={releaseId}&ltd={ltd}&dtnt_tin={taxCode}&loaitb_phanh={type}";
             string viewUrl = $"http://{urlPrefix}.tracuuhoadon.gdt.gov.vn/viewtbph.html?{paramz}";
             if (!string.IsNullOrWhiteSpace(PostJsonRequest(paramz, viewUrl)))
