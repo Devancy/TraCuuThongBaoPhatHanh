@@ -1,0 +1,5 @@
+﻿<item>
+  <version>2.0.0.0</version>
+  <url>https://github.com/Devancy/TraCuuThongBaoPhatHanh/raw/master/TraCuuThongBaoPhatHanh/Deploy/Release.zip</url>
+  <mandatory mode="ForcedDownload">true</mandatory>
+</item>
