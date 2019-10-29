@@ -73,7 +73,6 @@
             // 
             // openFileDialog
             // 
-            this.openFileDialog.FileName = "openFileDialog";
             this.openFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
             // tableLayoutPanel
@@ -306,7 +305,7 @@
             // 
             this.labelStep3.AutoSize = true;
             this.labelStep3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelStep3.Location = new System.Drawing.Point(43, 25);
+            this.labelStep3.Location = new System.Drawing.Point(43, 30);
             this.labelStep3.Name = "labelStep3";
             this.labelStep3.Size = new System.Drawing.Size(20, 17);
             this.labelStep3.TabIndex = 34;
@@ -322,6 +321,8 @@
             this.labelInfo.Size = new System.Drawing.Size(324, 19);
             this.labelInfo.TabIndex = 36;
             this.labelInfo.Text = "Đang khởi tạo dịch vụ, vui lòng chờ";
+            this.labelInfo.Visible = false;
+            this.labelInfo.TextChanged += new System.EventHandler(this.LabelInfo_TextChanged);
             // 
             // buttonF5
             // 
@@ -366,7 +367,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(61, 28);
+            this.label3.Location = new System.Drawing.Point(61, 30);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(171, 17);
             this.label3.TabIndex = 29;

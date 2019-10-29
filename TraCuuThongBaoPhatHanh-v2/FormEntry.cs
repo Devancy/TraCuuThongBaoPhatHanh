@@ -21,8 +21,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using HtmlAgilityPack;
-using RestSharp;
-using RestSharp.Extensions;
 
 namespace TraCuuThongBaoPhatHanh_v2
 {
@@ -31,7 +29,7 @@ namespace TraCuuThongBaoPhatHanh_v2
         private IWebDriver _driver;
         private CancellationTokenSource _tokenSource = new CancellationTokenSource();
         private readonly string _mainUrl = "http://tracuuhoadon.gdt.gov.vn/tbphtc.html";
-        private readonly string _baseDir = AppDomain.CurrentDomain.BaseDirectory;
+        private readonly string _baseDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output");
 
 
         private string _token = string.Empty;
@@ -41,11 +39,13 @@ namespace TraCuuThongBaoPhatHanh_v2
         private bool _autoCaptcha = ConfigurationManager.AppSettings["auto-captcha"] == "1";
         private List<TINResponse> _data;
         private string _output = null;
+        private volatile bool _showing = false;
 
         public FormEntry()
         {
             InitializeComponent();
             this.Text = this.Text + $" [Version {Program.Version}]";
+            Directory.CreateDirectory(_baseDir);
         }
 
         private async void FormEntry_Load(object sender, EventArgs e)
@@ -184,7 +184,7 @@ namespace TraCuuThongBaoPhatHanh_v2
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 //_cookies = null;
 
-                _output = !string.IsNullOrWhiteSpace(labelSourcePath.Text) ? labelSourcePath.Text : AppDomain.CurrentDomain.BaseDirectory + "Output";
+                _output = !string.IsNullOrWhiteSpace(labelSourcePath.Text) ? labelSourcePath.Text : _baseDir;
                 List<TINResponse> data = new List<TINResponse>();
 
                 if (ValidateCode(textBoxCaptcha.Text.Trim()))
@@ -445,18 +445,22 @@ namespace TraCuuThongBaoPhatHanh_v2
 
         private void ShowProgress(string text)
         {
+            _showing = true;
             Invoker((MethodInvoker)(() =>
             {
                 pictureBoxLoading.Visible = true;
+                labelInfo.Visible = true;
                 labelInfo.Text = text;
             }));
         }
 
         private void HideProgress()
         {
+            _showing = false;
             Invoker((MethodInvoker)(() =>
             {
                 pictureBoxLoading.Visible = false;
+                labelInfo.Visible = false;
                 labelInfo.Text = "";
             }));
         }
@@ -1170,6 +1174,33 @@ namespace TraCuuThongBaoPhatHanh_v2
             {
                 return false;
             }
+        }
+
+        private void LabelInfo_TextChanged(object sender, EventArgs e)
+        {
+            //int i = 1;
+            //while (i <= 10)
+            //{
+            //    await Task.Delay(300);
+
+            //    if (labelInfo.Text.EndsWith("..."))
+            //        Invoker((MethodInvoker)(() =>
+            //        {
+            //            var length = labelInfo.Text.Length - 3;
+            //            labelInfo.Text = labelInfo.Text.Substring(0, length >= 0 ? length : 0);
+            //        }));
+            //    else if (labelInfo.Text.EndsWith("..") || !labelInfo.Text.EndsWith("."))
+            //        Invoker((MethodInvoker)(() =>
+            //        {
+            //            labelInfo.Text += '.';
+            //        }));
+            //    else if (labelInfo.Text.EndsWith("."))
+            //        Invoker((MethodInvoker)(() =>
+            //        {
+            //            labelInfo.Text += "..";
+            //        }));
+            //    ++i;
+            //}
         }
     }
 }
