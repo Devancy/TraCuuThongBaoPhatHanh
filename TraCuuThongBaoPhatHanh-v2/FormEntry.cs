@@ -185,7 +185,7 @@ namespace TraCuuThongBaoPhatHanh_v2
                 if (ValidateCode(textBoxCaptcha.Text.Trim()))
                 {
                     ShowProgress("Đang đọc danh sách mã số thuế");
-                    List<string> taxCodes = this.ReadDataInputData(_output);
+                    List<string> taxCodes = this.ReadDataInputData();
                     if (taxCodes != null && taxCodes.Any())
                     {
                         ShowProgress("Đang truy xuất thông tin từ Tổng cục Thuế");
@@ -491,8 +491,7 @@ namespace TraCuuThongBaoPhatHanh_v2
             DataTable masterData = new DataTable("Master");
             DataTable detailsData = new DataTable("Details");
             BuildDataToExport(data, ref masterData, ref detailsData);
-            string directoryName = Path.GetDirectoryName(exportDirectory);
-            string fileName = Path.Combine(directoryName, $"EasyInvoice_KetQua_{DateTime.Now:dd.MM.yyyy_hh.mm.ss}.xlsx");
+            string fileName = Path.Combine(exportDirectory, $"EasyInvoice_KetQua_{DateTime.Now:dd.MM.yyyy_hh.mm.ss}.xlsx");
 
             using (var excelPackage = new ExcelPackage())
             {
@@ -540,24 +539,30 @@ namespace TraCuuThongBaoPhatHanh_v2
             //row1[6] = row1[8] = row1[10] = "Hóa đơn giấy";
             //row1[7] = row1[9] = row1[11] = "Hóa đơn điện tử";
             //masterSheetData.Rows.Add(row1);
-            detailsSheetData.Columns.Add("STT", typeof(int));
-            detailsSheetData.Columns.Add("MST", typeof(string));
-            detailsSheetData.Columns.Add("Tên đơn vị", typeof(string));
-            detailsSheetData.Columns.Add("Ngày thông báo", typeof(string));
-            detailsSheetData.Columns.Add("Số thông báo", typeof(string));
-            detailsSheetData.Columns.Add("Cơ quan thuế quản lý", typeof(string));
-            detailsSheetData.Columns.Add("Tên loại hóa đơn", typeof(string));
-            detailsSheetData.Columns.Add("Ngày bắt đầu sử dụng", typeof(string));
-            detailsSheetData.Columns.Add("Mẫu số", typeof(string));
-            detailsSheetData.Columns.Add("Ký hiệu", typeof(string));
-            detailsSheetData.Columns.Add("Số lượng", typeof(int));
-            detailsSheetData.Columns.Add("Từ số", typeof(int));
-            detailsSheetData.Columns.Add("Đến số", typeof(int));
-            detailsSheetData.Columns.Add("Đã sử dụng", typeof(int));
-            detailsSheetData.Columns.Add("Doanh nghiệp in", typeof(string));
-            detailsSheetData.Columns.Add("Mã số thuế", typeof(string));
-            detailsSheetData.Columns.Add("Hợp đồng đặt in số", typeof(string));
-            detailsSheetData.Columns.Add("Hợp đồng đặt in ngày", typeof(string));
+            detailsSheetData.Columns.Add("STT", typeof(int)); // 0
+            detailsSheetData.Columns.Add("MST", typeof(string)); // 1
+            detailsSheetData.Columns.Add("Tên đơn vị", typeof(string)); // 2
+            detailsSheetData.Columns.Add("Ngày bắt đầu sử dụng", typeof(string)); // 7 - 3
+            detailsSheetData.Columns.Add("Mẫu số", typeof(string)); // 8 - 4
+            detailsSheetData.Columns.Add("Ký hiệu", typeof(string)); // 9 - 5
+            detailsSheetData.Columns.Add("Số lượng", typeof(int)); // 10 - 6
+            detailsSheetData.Columns.Add("Từ số", typeof(int)); // 11 - 7
+            detailsSheetData.Columns.Add("Đến số", typeof(int)); // 12 - 8
+            detailsSheetData.Columns.Add("Ngày thông báo", typeof(string)); // 3 - 9
+            detailsSheetData.Columns.Add("Số thông báo", typeof(string)); // 4 - 10
+            detailsSheetData.Columns.Add("Cơ quan thuế quản lý", typeof(string)); //5 - 11
+            detailsSheetData.Columns.Add("Tên loại hóa đơn", typeof(string)); //6 - 12
+            //detailsSheetData.Columns.Add("Ngày bắt đầu sử dụng", typeof(string)); // 7
+            //detailsSheetData.Columns.Add("Mẫu số", typeof(string)); // 8
+            //detailsSheetData.Columns.Add("Ký hiệu", typeof(string)); // 9
+            //detailsSheetData.Columns.Add("Số lượng", typeof(int)); // 10
+            //detailsSheetData.Columns.Add("Từ số", typeof(int)); // 11
+            //detailsSheetData.Columns.Add("Đến số", typeof(int)); // 12
+            detailsSheetData.Columns.Add("Đã sử dụng", typeof(int)); //13
+            detailsSheetData.Columns.Add("Doanh nghiệp in", typeof(string)); // 14
+            detailsSheetData.Columns.Add("Mã số thuế", typeof(string)); // 15
+            detailsSheetData.Columns.Add("Hợp đồng đặt in số", typeof(string)); // 16
+            detailsSheetData.Columns.Add("Hợp đồng đặt in ngày", typeof(string)); // 17
             //detailsSheetData.Columns.Add("Link", typeof(string));
             int num1 = 1;
             for (int index1 = 0; index1 < data.Count; ++index1)
@@ -600,26 +605,41 @@ namespace TraCuuThongBaoPhatHanh_v2
                                 row3[0] = num1;
                                 row3[1] = releases[index2].dtnt_tin;
                                 row3[2] = releases[index2].dtnt_ten;
-                                row3[3] = releases[index2].ngay_phathanh;
-                                row3[4] = releases[index2].so_thong_bao;
-                                row3[5] = releases[index2].cqt_ten;
-                                row3[6] = dtl.ach_ten;
-
                                 DateTime dateTime;
                                 if (DateTime.TryParse(dtl.ngay_sdung, out dateTime))
                                 {
-                                    row3[7] = dateTime.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+                                    row3[3] = dateTime.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
                                 }
                                 else
                                 {
-                                    row3[7] = dtl.ngay_sdung;
+                                    row3[3] = dtl.ngay_sdung;
                                 }
 
-                                row3[8] = dtl.ach_ma;
-                                row3[9] = dtl.kyhieu;
-                                row3[10] = dtl.soluong;
-                                row3[11] = dtl.tu_so;
-                                row3[12] = dtl.den_so;
+                                row3[4] = dtl.ach_ma;
+                                row3[5] = dtl.kyhieu;
+                                row3[6] = dtl.soluong;
+                                row3[7] = dtl.tu_so;
+                                row3[8] = dtl.den_so;
+                                row3[9] = releases[index2].ngay_phathanh;
+                                row3[10] = releases[index2].so_thong_bao;
+                                row3[11] = releases[index2].cqt_ten;
+                                row3[12] = dtl.ach_ten;
+
+                                //DateTime dateTime;
+                                //if (DateTime.TryParse(dtl.ngay_sdung, out dateTime))
+                                //{
+                                //    row3[7] = dateTime.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+                                //}
+                                //else
+                                //{
+                                //    row3[7] = dtl.ngay_sdung;
+                                //}
+
+                                //row3[8] = dtl.ach_ma;
+                                //row3[9] = dtl.kyhieu;
+                                //row3[10] = dtl.soluong;
+                                //row3[11] = dtl.tu_so;
+                                //row3[12] = dtl.den_so;
                                 if (dtl.da_sdung != null)
                                     row3[13] = dtl.da_sdung;
                                 row3[14] = dtl.nin_ten;
@@ -669,7 +689,7 @@ namespace TraCuuThongBaoPhatHanh_v2
             }
         }
 
-        public List<string> ReadDataInputData(string filePath)
+        public List<string> ReadDataInputData()
         {
             List<string> results = new List<string>();
             var textArea = textBoxTaxCodeList.Text;
@@ -684,7 +704,7 @@ namespace TraCuuThongBaoPhatHanh_v2
 
             if (!results.Any())
             {
-                var lines = File.ReadAllLines(filePath);
+                var lines = File.ReadAllLines(_output);
                 foreach (var line in lines)
                 {
                     var alias = line?.Trim();
@@ -961,8 +981,8 @@ namespace TraCuuThongBaoPhatHanh_v2
 
         private void LogException(Exception ex)
         {
-            System.IO.File.AppendAllText(string.Format("{0}\\Log.txt", AppDomain.CurrentDomain.BaseDirectory), ex.ToString());
-            System.IO.File.AppendAllText(string.Format("{0}\\Log.txt", AppDomain.CurrentDomain.BaseDirectory), ex.StackTrace);
+            System.IO.File.AppendAllText(string.Format("{0}\\Log.txt", AppDomain.CurrentDomain.BaseDirectory), $"{DateTime.Now} - {ex}");
+            System.IO.File.AppendAllText(string.Format("{0}\\Log.txt", AppDomain.CurrentDomain.BaseDirectory), $"{DateTime.Now} - {ex.StackTrace}");
         }
 
         private bool ValidateCode(string captchaCode)
@@ -985,8 +1005,9 @@ namespace TraCuuThongBaoPhatHanh_v2
         {
             if (_data != null && _data.Any())
             {
-                var output = ExportDataToExcel(_data, _output);
-                System.Diagnostics.Process.Start(output);
+                Directory.CreateDirectory(Path.GetDirectoryName(_output));
+                var excelFile = ExportDataToExcel(_data, _output);
+                System.Diagnostics.Process.Start(excelFile);
             }
             else
             {

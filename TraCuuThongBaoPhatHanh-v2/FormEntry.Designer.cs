@@ -73,7 +73,6 @@
             // 
             // openFileDialog
             // 
-            this.openFileDialog.FileName = "openFileDialog";
             this.openFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
             // tableLayoutPanel
@@ -306,7 +305,7 @@
             // 
             this.labelStep3.AutoSize = true;
             this.labelStep3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelStep3.Location = new System.Drawing.Point(43, 25);
+            this.labelStep3.Location = new System.Drawing.Point(43, 28);
             this.labelStep3.Name = "labelStep3";
             this.labelStep3.Size = new System.Drawing.Size(20, 17);
             this.labelStep3.TabIndex = 34;
@@ -326,7 +325,7 @@
             // buttonF5
             // 
             this.buttonF5.Image = ((System.Drawing.Image)(resources.GetObject("buttonF5.Image")));
-            this.buttonF5.Location = new System.Drawing.Point(508, 24);
+            this.buttonF5.Location = new System.Drawing.Point(508, 22);
             this.buttonF5.Name = "buttonF5";
             this.buttonF5.Size = new System.Drawing.Size(31, 28);
             this.buttonF5.TabIndex = 6;
@@ -347,7 +346,7 @@
             // pictureBoxCaptcha
             // 
             this.pictureBoxCaptcha.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxCaptcha.Location = new System.Drawing.Point(538, 25);
+            this.pictureBoxCaptcha.Location = new System.Drawing.Point(538, 23);
             this.pictureBoxCaptcha.Name = "pictureBoxCaptcha";
             this.pictureBoxCaptcha.Size = new System.Drawing.Size(122, 26);
             this.pictureBoxCaptcha.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
