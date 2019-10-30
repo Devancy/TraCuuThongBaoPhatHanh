@@ -47,6 +47,7 @@
             this.dateTimePickerFrom = new System.Windows.Forms.DateTimePicker();
             this.buttonSelectDataSource = new System.Windows.Forms.Button();
             this.panelMid = new System.Windows.Forms.Panel();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.labelStep4 = new System.Windows.Forms.Label();
             this.labelStep3 = new System.Windows.Forms.Label();
             this.labelInfo = new System.Windows.Forms.Label();
@@ -142,6 +143,7 @@
             // 
             this.pictureBoxLogo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBoxLogo.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBoxLogo.Image = global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.logo_easyinvoice;
             this.pictureBoxLogo.Location = new System.Drawing.Point(256, 20);
             this.pictureBoxLogo.Name = "pictureBoxLogo";
@@ -149,6 +151,7 @@
             this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxLogo.TabIndex = 36;
             this.pictureBoxLogo.TabStop = false;
+            this.pictureBoxLogo.Click += new System.EventHandler(this.PictureBoxLogo_Click);
             // 
             // buttonClearSourcePath
             // 
@@ -276,6 +279,7 @@
             // 
             // panelMid
             // 
+            this.panelMid.Controls.Add(this.progressBar);
             this.panelMid.Controls.Add(this.labelStep4);
             this.panelMid.Controls.Add(this.labelStep3);
             this.panelMid.Controls.Add(this.labelInfo);
@@ -291,11 +295,20 @@
             this.panelMid.Size = new System.Drawing.Size(695, 135);
             this.panelMid.TabIndex = 1;
             // 
+            // progressBar
+            // 
+            this.progressBar.Location = new System.Drawing.Point(64, 128);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(596, 5);
+            this.progressBar.Step = 1;
+            this.progressBar.TabIndex = 37;
+            this.progressBar.Visible = false;
+            // 
             // labelStep4
             // 
             this.labelStep4.AutoSize = true;
             this.labelStep4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelStep4.Location = new System.Drawing.Point(43, 96);
+            this.labelStep4.Location = new System.Drawing.Point(43, 92);
             this.labelStep4.Name = "labelStep4";
             this.labelStep4.Size = new System.Drawing.Size(20, 17);
             this.labelStep4.TabIndex = 34;
@@ -305,7 +318,7 @@
             // 
             this.labelStep3.AutoSize = true;
             this.labelStep3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelStep3.Location = new System.Drawing.Point(43, 28);
+            this.labelStep3.Location = new System.Drawing.Point(43, 24);
             this.labelStep3.Name = "labelStep3";
             this.labelStep3.Size = new System.Drawing.Size(20, 17);
             this.labelStep3.TabIndex = 34;
@@ -316,7 +329,7 @@
             this.labelInfo.AutoSize = true;
             this.labelInfo.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelInfo.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.labelInfo.Location = new System.Drawing.Point(300, 96);
+            this.labelInfo.Location = new System.Drawing.Point(299, 98);
             this.labelInfo.Name = "labelInfo";
             this.labelInfo.Size = new System.Drawing.Size(324, 19);
             this.labelInfo.TabIndex = 36;
@@ -325,7 +338,7 @@
             // buttonF5
             // 
             this.buttonF5.Image = ((System.Drawing.Image)(resources.GetObject("buttonF5.Image")));
-            this.buttonF5.Location = new System.Drawing.Point(508, 22);
+            this.buttonF5.Location = new System.Drawing.Point(508, 18);
             this.buttonF5.Name = "buttonF5";
             this.buttonF5.Size = new System.Drawing.Size(31, 28);
             this.buttonF5.TabIndex = 6;
@@ -335,7 +348,7 @@
             // buttonExecute
             // 
             this.buttonExecute.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonExecute.Location = new System.Drawing.Point(64, 87);
+            this.buttonExecute.Location = new System.Drawing.Point(64, 83);
             this.buttonExecute.Name = "buttonExecute";
             this.buttonExecute.Size = new System.Drawing.Size(86, 34);
             this.buttonExecute.TabIndex = 7;
@@ -346,7 +359,7 @@
             // pictureBoxCaptcha
             // 
             this.pictureBoxCaptcha.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxCaptcha.Location = new System.Drawing.Point(538, 23);
+            this.pictureBoxCaptcha.Location = new System.Drawing.Point(538, 19);
             this.pictureBoxCaptcha.Name = "pictureBoxCaptcha";
             this.pictureBoxCaptcha.Size = new System.Drawing.Size(122, 26);
             this.pictureBoxCaptcha.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -356,7 +369,7 @@
             // textBoxCaptcha
             // 
             this.textBoxCaptcha.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxCaptcha.Location = new System.Drawing.Point(303, 25);
+            this.textBoxCaptcha.Location = new System.Drawing.Point(303, 21);
             this.textBoxCaptcha.Name = "textBoxCaptcha";
             this.textBoxCaptcha.Size = new System.Drawing.Size(122, 23);
             this.textBoxCaptcha.TabIndex = 5;
@@ -365,7 +378,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(61, 28);
+            this.label3.Location = new System.Drawing.Point(61, 24);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(171, 17);
             this.label3.TabIndex = 29;
@@ -374,7 +387,7 @@
             // pictureBoxLoading
             // 
             this.pictureBoxLoading.Image = global::TraCuuThongBaoPhatHanh_v2.Properties.Resources.cat;
-            this.pictureBoxLoading.Location = new System.Drawing.Point(192, 28);
+            this.pictureBoxLoading.Location = new System.Drawing.Point(190, 30);
             this.pictureBoxLoading.Name = "pictureBoxLoading";
             this.pictureBoxLoading.Size = new System.Drawing.Size(111, 94);
             this.pictureBoxLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -491,6 +504,7 @@
         private System.Windows.Forms.Button buttonClearSourcePath;
         private System.Windows.Forms.PictureBox pictureBoxLogo;
         private System.Windows.Forms.LinkLabel linkLabelExportExcel;
+        private System.Windows.Forms.ProgressBar progressBar;
     }
 }
 

@@ -179,24 +179,31 @@ namespace TraCuuThongBaoPhatHanh_v2
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 _cookies = null;
 
-                _output = !string.IsNullOrWhiteSpace(labelSourcePath.Text) ? labelSourcePath.Text : AppDomain.CurrentDomain.BaseDirectory + "Output";
+                _output = !string.IsNullOrWhiteSpace(labelSourcePath.Text) ? Path.GetDirectoryName(labelSourcePath.Text) : AppDomain.CurrentDomain.BaseDirectory + "Output";
                 List<TINResponse> data = new List<TINResponse>();
 
                 if (ValidateCode(textBoxCaptcha.Text.Trim()))
                 {
-                    ShowProgress("Đang đọc danh sách mã số thuế");
+                    ShowAnimation("Đang đọc danh sách mã số thuế");
                     List<string> taxCodes = this.ReadDataInputData();
                     if (taxCodes != null && taxCodes.Any())
                     {
-                        ShowProgress("Đang truy xuất thông tin từ Tổng cục Thuế");
+                        ShowAnimation("Đang truy xuất thông tin từ Tổng cục Thuế");
                         int count = taxCodes.Count;
+
+                        if (count > 0)
+                        {
+                            Invoker((MethodInvoker)(() => { this.progressBar.Maximum = count; }));
+                        }
+
                         for (int index = 0; index < count; ++index)
                         {
+                            ShowProgressBar();
                             currentTaxCode = taxCodes[index];
                             try
                             {
                                 TINResponse releaseByTaxCode = GetInvoiceReleaseByTaxCode(currentTaxCode);
-                                if (releaseByTaxCode == null || releaseByTaxCode.Releases == null || releaseByTaxCode.Releases.Count <= 0)
+                                if (releaseByTaxCode?.Releases == null || releaseByTaxCode.Releases.Count <= 0)
                                     releaseByTaxCode.tin = currentTaxCode?.Trim();
                                 data.Add(releaseByTaxCode);
                             }
@@ -211,10 +218,11 @@ namespace TraCuuThongBaoPhatHanh_v2
                                     throw ex;
                             }
                         }
+                        HideProgressBar();
                     }
                     if (data.Count > 0)
                     {
-                        ShowProgress("Đang xuất thông tin chi tiết");
+                        ShowAnimation("Đang xuất thông tin chi tiết");
                         _data = data;
                         stopwatch.Stop();
                         ShowResults(data, $"Thời gian xử lý {TimeSpan.FromMilliseconds(stopwatch.ElapsedMilliseconds).ToString("hh\\:mm\\:ss")}");
@@ -241,7 +249,7 @@ namespace TraCuuThongBaoPhatHanh_v2
                 buttonExecute.Enabled = true;
                 buttonExecute.Text = "Go";
             }));
-            HideProgress();
+            HideAnimation();
             return Task.FromResult((object)null);
         }
 
@@ -282,7 +290,11 @@ namespace TraCuuThongBaoPhatHanh_v2
         {
             Task.Run(() =>
             {
-                ShowProgress("Đang khởi tạo dịch vụ, vui lòng chờ");
+                ShowAnimation("Đang khởi tạo dịch vụ, vui lòng chờ");
+                Invoker((MethodInvoker)(() =>
+                {
+                    buttonExecute.Enabled = false;
+                }));
                 string captchaBase64 = string.Empty;
 
                 try
@@ -299,14 +311,14 @@ namespace TraCuuThongBaoPhatHanh_v2
                 {
                     LogException(ex);
                     BridgePopupMessage("Lỗi khởi tạo dịch vụ, liên hệ để được hỗ trợ", icon: MessageBoxIcon.Error);
-                    HideProgress();
+                    HideAnimation();
                     return;
                     //_driver = InitializeChrome();
                 }
 
                 do
                 {
-                    ShowProgress("Đang lấy mã captcha");
+                    ShowAnimation("Đang lấy mã captcha");
                     // refresh captcha
                     if (captchaBase64 != string.Empty || !(sender is FormEntry))
                     {
@@ -358,11 +370,15 @@ namespace TraCuuThongBaoPhatHanh_v2
 
                 } while (string.IsNullOrWhiteSpace(captchaBase64));
 
-                HideProgress();
+                Invoker((MethodInvoker)(() =>
+                {
+                    buttonExecute.Enabled = true;
+                }));
+                HideAnimation();
             });
         }
 
-        private void ShowProgress(string text)
+        private void ShowAnimation(string text)
         {
             Invoker((MethodInvoker)(() =>
             {
@@ -371,12 +387,31 @@ namespace TraCuuThongBaoPhatHanh_v2
             }));
         }
 
-        private void HideProgress()
+        private void HideAnimation()
         {
             Invoker((MethodInvoker)(() =>
             {
                 pictureBoxLoading.Visible = false;
                 labelInfo.Text = "";
+            }));
+        }
+
+        private void ShowProgressBar()
+        {
+            Invoker((MethodInvoker)(() =>
+            {
+                this.progressBar.Visible = true;
+                this.progressBar.PerformStep();
+                this.progressBar.Update();
+            }));
+        }
+
+        private void HideProgressBar()
+        {
+            Invoker((MethodInvoker)(() =>
+            {
+                this.progressBar.Value = 0;
+                this.progressBar.Visible = false;
             }));
         }
 
@@ -700,11 +735,13 @@ namespace TraCuuThongBaoPhatHanh_v2
                 {
                     results.AddRange(temp);
                 }
+
+                return results;
             }
 
             if (!results.Any())
             {
-                var lines = File.ReadAllLines(_output);
+                var lines = File.ReadAllLines(labelSourcePath.Text);
                 foreach (var line in lines)
                 {
                     var alias = line?.Trim();
@@ -1026,6 +1063,11 @@ namespace TraCuuThongBaoPhatHanh_v2
             {
                 return false;
             }
+        }
+
+        private void PictureBoxLogo_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://easyinvoice.vn/");
         }
     }
 }
