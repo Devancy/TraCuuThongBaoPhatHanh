@@ -1042,7 +1042,7 @@ namespace TraCuuThongBaoPhatHanh_v2
         {
             if (_data != null && _data.Any())
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(_output));
+                Directory.CreateDirectory(_output);
                 var excelFile = ExportDataToExcel(_data, _output);
                 System.Diagnostics.Process.Start(excelFile);
             }
