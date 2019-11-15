@@ -701,7 +701,10 @@ namespace TraCuuThongBaoPhatHanh_v2
                 else
                 {
                     row2[1] = data[index1].tin;
-                    row2[2] = "Không tìm thấy kết quả tra cứu";
+                    //row2[2] = "Không tìm thấy kết quả tra cứu";
+                    row2[2] = data[index1].tinModel?.norm_name;//"Không tìm thấy kết quả tra cứu";
+                    row2[3] = data[index1].tinModel?.tran_tel;
+                    row2[4] = data[index1].tinModel?.tran_addr;
                 }
                 masterSheetData.Rows.Add(row2);
             }
@@ -901,7 +904,9 @@ namespace TraCuuThongBaoPhatHanh_v2
                 {
                     comRow[1] = 0;
                     comRow[2] = data[comIndex].tin;
-                    comRow[3] = "Không tìm thấy kết quả tra cứu";
+                    comRow[3] = data[comIndex].tinModel?.norm_name;//"Không tìm thấy kết quả tra cứu";
+                    comRow[4] = data[comIndex].tinModel?.tran_tel;
+                    comRow[5] = data[comIndex].tinModel?.tran_addr;
                 }
                 comRow[1] = alreadyUseEInvoice ? 1 : 0; // Đã sử dụng HĐĐT
                 masterSheetData.Rows.Add(comRow);
