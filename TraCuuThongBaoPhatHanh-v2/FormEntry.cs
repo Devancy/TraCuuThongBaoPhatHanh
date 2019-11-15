@@ -25,6 +25,7 @@ namespace TraCuuThongBaoPhatHanh_v2
 {
     public partial class FormEntry : Form
     {
+        private const string SoftdreamsTaxCode = "0105987432";
         private IWebDriver _driver;
         private CancellationTokenSource _tokenSource = new CancellationTokenSource();
         private readonly string _mainUrl = "http://tracuuhoadon.gdt.gov.vn/tbphtc.html";
@@ -48,6 +49,7 @@ namespace TraCuuThongBaoPhatHanh_v2
         {
             Program.CheckForUpdate();
 
+            comboBoxExportType.SelectedIndex = 0;
             dateTimePickerFrom.Value = DateTime.Today.AddYears(-10);
             dateTimePickerTo.Value = DateTime.Today;
             var token = _tokenSource.Token;
@@ -523,9 +525,9 @@ namespace TraCuuThongBaoPhatHanh_v2
 
         private string ExportDataToExcel(IReadOnlyList<TINResponse> data, string exportDirectory)
         {
-            DataTable masterData = new DataTable("Master");
-            DataTable detailsData = new DataTable("Details");
-            BuildDataToExport(data, ref masterData, ref detailsData);
+            DataTable masterData = new DataTable("Company");
+            //DataTable detailsData = new DataTable("Details");
+            var detailTables = BuildDataToExport(data, ref masterData, comboBoxExportType.SelectedIndex);
             string fileName = Path.Combine(exportDirectory, $"EasyInvoice_KetQua_{DateTime.Now:dd.MM.yyyy_hh.mm.ss}.xlsx");
 
             using (var excelPackage = new ExcelPackage())
@@ -537,15 +539,19 @@ namespace TraCuuThongBaoPhatHanh_v2
                 excelPackage.Workbook.Properties.Created = DateTime.Now;
 
                 //Create the WorkSheet
-                ExcelWorksheet worksheetCompany = excelPackage.Workbook.Worksheets.Add("Company");
+                ExcelWorksheet worksheetCompany = excelPackage.Workbook.Worksheets.Add(masterData.TableName);
                 worksheetCompany.Cells["A1"].LoadFromDataTable(masterData, true, TableStyles.Dark9);
                 worksheetCompany.Cells[worksheetCompany.Dimension.Address].AutoFitColumns();
 
-                ExcelWorksheet worksheetDetails = excelPackage.Workbook.Worksheets.Add("Details");
-                worksheetDetails.Cells["A1"].LoadFromDataTable(detailsData, true, TableStyles.Dark9);
-                worksheetDetails.Cells[worksheetDetails.Dimension.Address].AutoFitColumns();
 
-                excelPackage.Workbook.Worksheets.Add("Easy Invoice");
+                foreach (var table in detailTables)
+                {
+                    ExcelWorksheet worksheetDetails = excelPackage.Workbook.Worksheets.Add(table.TableName);
+                    worksheetDetails.Cells["A1"].LoadFromDataTable(table, true, TableStyles.Dark9);
+                    worksheetDetails.Cells[worksheetDetails.Dimension.Address].AutoFitColumns();
+                }
+
+                excelPackage.Workbook.Worksheets.Add("A product of Softdreams");
 
                 FileInfo fi = new FileInfo(fileName);
                 excelPackage.SaveAs(fi);
@@ -722,6 +728,238 @@ namespace TraCuuThongBaoPhatHanh_v2
                 }
                 masterSheetData.Rows.Add(row2);
             }
+        }
+
+        private IEnumerable<DataTable> BuildDataToExport(IReadOnlyList<TINResponse> data, ref DataTable masterSheetData, int exportType)
+        {
+            List<DataTable> detailDataTables = new List<DataTable>();
+
+            masterSheetData.Columns.Add("STT", typeof(int));
+            masterSheetData.Columns.Add("Đã sử dụng HĐĐT", typeof(int));
+            masterSheetData.Columns.Add("MST", typeof(string));
+            masterSheetData.Columns.Add("Tên đơn vị", typeof(string));
+            masterSheetData.Columns.Add("Điện thoại", typeof(string));
+            masterSheetData.Columns.Add("Địa chỉ", typeof(string));
+            masterSheetData.Columns.Add("Thủ trưởng đơn vị", typeof(string));
+            masterSheetData.Columns.Add((DateTime.Today.Year - 2).ToString(), typeof(string));
+            masterSheetData.Columns.Add($"{(DateTime.Today.Year - 2)}E", typeof(string));
+            masterSheetData.Columns.Add((DateTime.Today.Year - 1).ToString(), typeof(string));
+            masterSheetData.Columns.Add($"{(DateTime.Today.Year - 1)}E", typeof(string));
+            masterSheetData.Columns.Add(DateTime.Today.Year.ToString(), typeof(string));
+            masterSheetData.Columns.Add($"{DateTime.Today.Year}E", typeof(string));
+            masterSheetData.Columns.Add("Nhà cung cấp HĐĐT gần nhất", typeof(string));
+
+            DataTable pInvoice = new DataTable("P_Invoice");
+            pInvoice.Columns.Add("STT", typeof(int)); // 0
+            pInvoice.Columns.Add("MST", typeof(string)); // 1
+            pInvoice.Columns.Add("Tên đơn vị", typeof(string)); // 2
+            pInvoice.Columns.Add("Ngày bắt đầu sử dụng", typeof(string)); // 7 - 3
+            pInvoice.Columns.Add("Mẫu số", typeof(string)); // 8 - 4
+            pInvoice.Columns.Add("Ký hiệu", typeof(string)); // 9 - 5
+            pInvoice.Columns.Add("Số lượng", typeof(int)); // 10 - 6
+            pInvoice.Columns.Add("Từ số", typeof(int)); // 11 - 7
+            pInvoice.Columns.Add("Đến số", typeof(int)); // 12 - 8
+            pInvoice.Columns.Add("Ngày thông báo", typeof(string)); // 3 - 9
+            pInvoice.Columns.Add("Số thông báo", typeof(string)); // 4 - 10
+            pInvoice.Columns.Add("Cơ quan thuế quản lý", typeof(string)); //5 - 11
+            pInvoice.Columns.Add("Tên loại hóa đơn", typeof(string)); //6 - 12
+            pInvoice.Columns.Add("Đã sử dụng", typeof(int)); //13
+            pInvoice.Columns.Add("Doanh nghiệp in", typeof(string)); // 14
+            pInvoice.Columns.Add("Mã số thuế", typeof(string)); // 15
+            pInvoice.Columns.Add("Hợp đồng đặt in số", typeof(string)); // 16
+            pInvoice.Columns.Add("Hợp đồng đặt in ngày", typeof(string)); // 17
+
+            DataTable eInvoice = new DataTable("E_Invoice");
+            eInvoice.Columns.Add("STT", typeof(int)); // 0
+            eInvoice.Columns.Add("MST", typeof(string)); // 1
+            eInvoice.Columns.Add("Tên đơn vị", typeof(string)); // 2
+            eInvoice.Columns.Add("Ngày bắt đầu sử dụng", typeof(string)); // 7 - 3
+            eInvoice.Columns.Add("Mẫu số", typeof(string)); // 8 - 4
+            eInvoice.Columns.Add("Ký hiệu", typeof(string)); // 9 - 5
+            eInvoice.Columns.Add("Số lượng", typeof(int)); // 10 - 6
+            eInvoice.Columns.Add("Từ số", typeof(int)); // 11 - 7
+            eInvoice.Columns.Add("Đến số", typeof(int)); // 12 - 8
+            eInvoice.Columns.Add("Ngày thông báo", typeof(string)); // 3 - 9
+            eInvoice.Columns.Add("Số thông báo", typeof(string)); // 4 - 10
+            eInvoice.Columns.Add("Cơ quan thuế quản lý", typeof(string)); //5 - 11
+            eInvoice.Columns.Add("Tên loại hóa đơn", typeof(string)); //6 - 12
+            eInvoice.Columns.Add("Đã sử dụng", typeof(int)); //13
+            eInvoice.Columns.Add("Doanh nghiệp in", typeof(string)); // 14
+            eInvoice.Columns.Add("Mã số thuế", typeof(string)); // 15
+            eInvoice.Columns.Add("Hợp đồng đặt in số", typeof(string)); // 16
+            eInvoice.Columns.Add("Hợp đồng đặt in ngày", typeof(string)); // 17
+
+            DataTable easyInvoice = new DataTable("EasyInvoice");
+            easyInvoice.Columns.Add("STT", typeof(int)); // 0
+            easyInvoice.Columns.Add("MST", typeof(string)); // 1
+            easyInvoice.Columns.Add("Tên đơn vị", typeof(string)); // 2
+            easyInvoice.Columns.Add("Ngày bắt đầu sử dụng", typeof(string)); // 7 - 3
+            easyInvoice.Columns.Add("Mẫu số", typeof(string)); // 8 - 4
+            easyInvoice.Columns.Add("Ký hiệu", typeof(string)); // 9 - 5
+            easyInvoice.Columns.Add("Số lượng", typeof(int)); // 10 - 6
+            easyInvoice.Columns.Add("Từ số", typeof(int)); // 11 - 7
+            easyInvoice.Columns.Add("Đến số", typeof(int)); // 12 - 8
+            easyInvoice.Columns.Add("Ngày thông báo", typeof(string)); // 3 - 9
+            easyInvoice.Columns.Add("Số thông báo", typeof(string)); // 4 - 10
+            easyInvoice.Columns.Add("Cơ quan thuế quản lý", typeof(string)); //5 - 11
+            easyInvoice.Columns.Add("Tên loại hóa đơn", typeof(string)); //6 - 12
+            easyInvoice.Columns.Add("Đã sử dụng", typeof(int)); //13
+            easyInvoice.Columns.Add("Doanh nghiệp in", typeof(string)); // 14
+            easyInvoice.Columns.Add("Mã số thuế", typeof(string)); // 15
+            easyInvoice.Columns.Add("Hợp đồng đặt in số", typeof(string)); // 16
+            easyInvoice.Columns.Add("Hợp đồng đặt in ngày", typeof(string)); // 17
+
+            int num1 = 1;
+            for (int index1 = 0; index1 < data.Count; ++index1)
+            {
+                bool useEInvoice = false;
+                DataRow row2 = masterSheetData.NewRow();
+                row2[0] = index1 + 1;
+                int year = DateTime.Now.Year;
+                int num2 = year - 1;
+                int num3 = year - 2;
+                int num4 = 0;
+                int num5 = 0;
+                int num6 = 0;
+                int num7 = 0;
+                int num8 = 0;
+                int num9 = 0;
+                StringBuilder stringBuilder = new StringBuilder();
+                if (data[index1].Releases != null)
+                {
+                    List<Release> releases = data[index1].Releases;
+                    Release release2 = data[index1].Releases.Last<Release>();
+                    try
+                    {
+                        //row2[1] = release2.dtnt_tin; // Đã sử dụng HĐĐT
+                        row2[2] = release2.dtnt_tin;
+                        row2[3] = release2.dtnt_ten;
+                        row2[4] = release2.dtnt_tel;
+                        row2[5] = release2.dtnt_diachi;
+                        row2[6] = release2.thu_truong;
+                    }
+                    catch (Exception ex)
+                    {
+                        LogException(ex);
+                    }
+                    for (int index2 = 0; index2 < releases.Count; ++index2)
+                    {
+                        if (releases[index2].dtls != null)
+                        {
+                            foreach (ReleaseDetail dtl in releases[index2].dtls)
+                            {
+                                DataTable target = null;
+                                if(!useEInvoice)
+                                    useEInvoice = dtl.kyhieu != null && dtl.kyhieu.Trim().EndsWith("E", StringComparison.InvariantCultureIgnoreCase);
+                                if (exportType == 0)
+                                {
+                                    target = dtl.nin_tin != null && dtl.nin_tin.Trim() == SoftdreamsTaxCode ? easyInvoice : dtl.kyhieu != null && dtl.kyhieu.Trim().EndsWith("E", StringComparison.InvariantCultureIgnoreCase) ? eInvoice : pInvoice;
+                                }
+                                else //if (exportType == 1)
+                                {
+                                    target = dtl.kyhieu != null && dtl.kyhieu.Trim().EndsWith("E", StringComparison.InvariantCultureIgnoreCase) ? eInvoice : pInvoice;
+                                }
+
+                                DataRow row3 = target.NewRow();
+                                row3[0] = num1;
+                                row3[1] = releases[index2].dtnt_tin;
+                                row3[2] = releases[index2].dtnt_ten;
+                                if (DateTime.TryParse(dtl.ngay_sdung, out var dateTime))
+                                {
+                                    row3[3] = dateTime.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+                                }
+                                else
+                                {
+                                    row3[3] = dtl.ngay_sdung;
+                                }
+
+                                row3[4] = dtl.ach_ma;
+                                row3[5] = dtl.kyhieu;
+                                row3[6] = dtl.soluong;
+                                row3[7] = dtl.tu_so;
+                                row3[8] = dtl.den_so;
+                                row3[9] = releases[index2].ngay_phathanh;
+                                row3[10] = releases[index2].so_thong_bao;
+                                row3[11] = releases[index2].cqt_ten;
+                                row3[12] = dtl.ach_ten;
+
+                                //DateTime dateTime;
+                                //if (DateTime.TryParse(dtl.ngay_sdung, out dateTime))
+                                //{
+                                //    row3[7] = dateTime.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+                                //}
+                                //else
+                                //{
+                                //    row3[7] = dtl.ngay_sdung;
+                                //}
+
+                                //row3[8] = dtl.ach_ma;
+                                //row3[9] = dtl.kyhieu;
+                                //row3[10] = dtl.soluong;
+                                //row3[11] = dtl.tu_so;
+                                //row3[12] = dtl.den_so;
+                                if (dtl.da_sdung != null)
+                                    row3[13] = dtl.da_sdung;
+                                row3[14] = dtl.nin_ten;
+                                row3[15] = dtl.nin_tin; // TODO tax code
+                                row3[16] = dtl.so_hopdong;
+                                row3[17] = dtl.ngay_hopdong;
+                                //row3[18] = dtl.link;
+                                if (releases[index2].ngay_phathanh.Contains(year.ToString()))
+                                {
+                                    num4 += dtl.soluong.Value;
+                                    if (dtl.kyhieu.Last<char>().ToString().ToLower() == "e")
+                                        num7 += dtl.soluong.Value;
+                                }
+                                else if (releases[index2].ngay_phathanh.Contains(num2.ToString()))
+                                {
+                                    num5 += dtl.soluong.Value;
+                                    if (dtl.kyhieu.Last<char>().ToString().ToLower() == "e")
+                                        num8 += dtl.soluong.Value;
+                                }
+                                else if (releases[index2].ngay_phathanh.Contains(num3.ToString()))
+                                {
+                                    num6 += dtl.soluong.Value;
+                                    if (dtl.kyhieu.Last<char>().ToString().ToLower() == "e")
+                                        num9 += dtl.soluong.Value;
+                                }
+                                if (dtl.kyhieu.LastOrDefault().ToString().ToLower() == "e" && !string.IsNullOrWhiteSpace(dtl.nin_ten))
+                                    stringBuilder.Append($"\n{dtl.nin_ten}");
+                                target.Rows.Add(row3);
+                                ++num1;
+                            }
+                        }
+                    }
+                    row2[6] = num6 - num9;
+                    row2[7] = num9;
+                    row2[8] = num5 - num8;
+                    row2[9] = num8;
+                    row2[10] = num4 - num7;
+                    row2[11] = num7;
+                    row2[12] = stringBuilder;
+                }
+                else
+                {
+                    row2[1] = data[index1].tin;
+                    row2[2] = "Không tìm thấy kết quả tra cứu";
+                }
+                row2[1] = useEInvoice ? 1 : 0; // Đã sử dụng HĐĐT
+                masterSheetData.Rows.Add(row2);
+            }
+
+            if (exportType == 0)
+            {
+                detailDataTables.Add(pInvoice);
+                detailDataTables.Add(eInvoice);
+                detailDataTables.Add(easyInvoice);
+            }
+            else //if (exportType == 1)
+            {
+                detailDataTables.Add(pInvoice);
+                detailDataTables.Add(eInvoice);
+            }
+
+            return detailDataTables;
         }
 
         public List<string> ReadDataInputData()
@@ -1038,20 +1276,6 @@ namespace TraCuuThongBaoPhatHanh_v2
 
         #endregion
 
-        private void LinkLabelExportExcel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            if (_data != null && _data.Any())
-            {
-                Directory.CreateDirectory(_output);
-                var excelFile = ExportDataToExcel(_data, _output);
-                System.Diagnostics.Process.Start(excelFile);
-            }
-            else
-            {
-                BridgePopupMessage("Không có dữ liệu để xuất");
-            }
-        }
-
         public static bool IsValidJson(string value)
         {
             try
@@ -1068,6 +1292,28 @@ namespace TraCuuThongBaoPhatHanh_v2
         private void PictureBoxLogo_Click(object sender, EventArgs e)
         {
             Process.Start("https://easyinvoice.vn/");
+        }
+
+        private void ButtonExport_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_data != null && _data.Any())
+                {
+                    Directory.CreateDirectory(_output);
+                    var excelFile = ExportDataToExcel(_data, _output);
+                    System.Diagnostics.Process.Start(excelFile);
+                }
+                else
+                {
+                    BridgePopupMessage("Không có dữ liệu để xuất");
+                }
+            }
+            catch (Exception ex)
+            {
+                LogException(ex);
+                BridgePopupMessage("Có lỗi trong quá trình xuất dữ liệu");
+            }
         }
     }
 }

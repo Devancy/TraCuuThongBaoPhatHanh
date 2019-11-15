@@ -58,7 +58,10 @@
             this.label3 = new System.Windows.Forms.Label();
             this.pictureBoxLoading = new System.Windows.Forms.PictureBox();
             this.panelBottom = new System.Windows.Forms.Panel();
-            this.linkLabelExportExcel = new System.Windows.Forms.LinkLabel();
+            this.buttonExport = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.comboBoxExportType = new System.Windows.Forms.ComboBox();
             this.labelContact = new System.Windows.Forms.Label();
             this.textBoxTaxCodeList = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel.SuspendLayout();
@@ -161,7 +164,7 @@
             this.buttonClearSourcePath.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonClearSourcePath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonClearSourcePath.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.buttonClearSourcePath.Location = new System.Drawing.Point(227, 112);
+            this.buttonClearSourcePath.Location = new System.Drawing.Point(227, 111);
             this.buttonClearSourcePath.Name = "buttonClearSourcePath";
             this.buttonClearSourcePath.Size = new System.Drawing.Size(25, 24);
             this.buttonClearSourcePath.TabIndex = 35;
@@ -264,12 +267,12 @@
             // buttonSelectDataSource
             // 
             this.buttonSelectDataSource.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.buttonSelectDataSource.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonSelectDataSource.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonSelectDataSource.Image = ((System.Drawing.Image)(resources.GetObject("buttonSelectDataSource.Image")));
             this.buttonSelectDataSource.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.buttonSelectDataSource.Location = new System.Drawing.Point(155, 110);
             this.buttonSelectDataSource.Name = "buttonSelectDataSource";
-            this.buttonSelectDataSource.Size = new System.Drawing.Size(71, 27);
+            this.buttonSelectDataSource.Size = new System.Drawing.Size(71, 26);
             this.buttonSelectDataSource.TabIndex = 2;
             this.buttonSelectDataSource.TabStop = false;
             this.buttonSelectDataSource.Text = " File ";
@@ -397,7 +400,10 @@
             // 
             // panelBottom
             // 
-            this.panelBottom.Controls.Add(this.linkLabelExportExcel);
+            this.panelBottom.Controls.Add(this.buttonExport);
+            this.panelBottom.Controls.Add(this.label4);
+            this.panelBottom.Controls.Add(this.label5);
+            this.panelBottom.Controls.Add(this.comboBoxExportType);
             this.panelBottom.Controls.Add(this.labelContact);
             this.panelBottom.Location = new System.Drawing.Point(11, 400);
             this.panelBottom.Margin = new System.Windows.Forms.Padding(10);
@@ -405,16 +411,48 @@
             this.panelBottom.Size = new System.Drawing.Size(695, 31);
             this.panelBottom.TabIndex = 2;
             // 
-            // linkLabelExportExcel
+            // buttonExport
             // 
-            this.linkLabelExportExcel.AutoSize = true;
-            this.linkLabelExportExcel.Location = new System.Drawing.Point(61, 9);
-            this.linkLabelExportExcel.Name = "linkLabelExportExcel";
-            this.linkLabelExportExcel.Size = new System.Drawing.Size(58, 13);
-            this.linkLabelExportExcel.TabIndex = 1;
-            this.linkLabelExportExcel.TabStop = true;
-            this.linkLabelExportExcel.Text = "Xuất Excel";
-            this.linkLabelExportExcel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabelExportExcel_LinkClicked);
+            this.buttonExport.Location = new System.Drawing.Point(237, 4);
+            this.buttonExport.Name = "buttonExport";
+            this.buttonExport.Size = new System.Drawing.Size(75, 23);
+            this.buttonExport.TabIndex = 37;
+            this.buttonExport.Text = "Xuất Excel";
+            this.buttonExport.UseVisualStyleBackColor = true;
+            this.buttonExport.Click += new System.EventHandler(this.ButtonExport_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(43, 7);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(20, 17);
+            this.label4.TabIndex = 36;
+            this.label4.Text = "5.";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(61, 7);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(45, 17);
+            this.label5.TabIndex = 35;
+            this.label5.Text = "Nhóm";
+            // 
+            // comboBoxExportType
+            // 
+            this.comboBoxExportType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxExportType.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.comboBoxExportType.FormattingEnabled = true;
+            this.comboBoxExportType.Items.AddRange(new object[] {
+            "Theo Easy Invoice",
+            "Theo HĐĐT/HĐG"});
+            this.comboBoxExportType.Location = new System.Drawing.Point(108, 5);
+            this.comboBoxExportType.Name = "comboBoxExportType";
+            this.comboBoxExportType.Size = new System.Drawing.Size(129, 21);
+            this.comboBoxExportType.TabIndex = 2;
             // 
             // labelContact
             // 
@@ -422,7 +460,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.labelContact.AutoSize = true;
             this.labelContact.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.labelContact.Location = new System.Drawing.Point(460, 9);
+            this.labelContact.Location = new System.Drawing.Point(463, 9);
             this.labelContact.Name = "labelContact";
             this.labelContact.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.labelContact.Size = new System.Drawing.Size(200, 13);
@@ -503,8 +541,11 @@
         private System.Windows.Forms.Label labelStep3;
         private System.Windows.Forms.Button buttonClearSourcePath;
         private System.Windows.Forms.PictureBox pictureBoxLogo;
-        private System.Windows.Forms.LinkLabel linkLabelExportExcel;
         private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ComboBox comboBoxExportType;
+        private System.Windows.Forms.Button buttonExport;
     }
 }
 
