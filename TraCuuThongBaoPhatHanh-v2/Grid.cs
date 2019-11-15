@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Drawing;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace TraCuuThongBaoPhatHanh_v2
@@ -9,6 +10,7 @@ namespace TraCuuThongBaoPhatHanh_v2
         private Grid()
         {
             InitializeComponent();
+            SetDoubleBuffer(this.dataGridView, true);
         }
 
         public Grid(DataTable dataSource, string elapsed) : this()
@@ -24,7 +26,7 @@ namespace TraCuuThongBaoPhatHanh_v2
 
         private void DataGridView_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
-            if (dataGridView.Rows[e.RowIndex].Cells["Mã số thuế"]?.Value is string tax && tax.Trim() == "0105987432")
+            if (dataGridView.Rows[e.RowIndex].Cells["Mã số thuế"]?.Value is string tax && tax.Trim() == FormEntry.SoftdreamsTaxCode)
             {
                 var centerFormat = new StringFormat
                 {
@@ -42,6 +44,13 @@ namespace TraCuuThongBaoPhatHanh_v2
                 dataGridView.Rows[e.RowIndex].Cells["Ký hiệu"].Style.ForeColor = dataGridView.DefaultCellStyle.SelectionForeColor;
                 dataGridView.Rows[e.RowIndex].Cells["Ký hiệu"].Style.BackColor = dataGridView.DefaultCellStyle.SelectionBackColor;
             }
+        }
+
+        private static void SetDoubleBuffer(Control ctl, bool doubleBuffered)
+        {
+            typeof(Control).InvokeMember("DoubleBuffered",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty,
+                null, ctl, new object[] { doubleBuffered });
         }
     }
 }
