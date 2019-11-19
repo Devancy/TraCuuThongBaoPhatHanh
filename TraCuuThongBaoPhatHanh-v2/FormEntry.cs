@@ -961,8 +961,8 @@ namespace TraCuuThongBaoPhatHanh_v2
             string format = "{0}%2F{1}%2F{2}";
             string text = textBoxCaptcha.Text;
             string kind = "tc";
-            string[] from = dateTimePickerFrom.Value.ToString("dd/MM/yyyy").Split('/');
-            string[] to = dateTimePickerTo.Value.ToString("dd/MM/yyyy").Split('/');
+            string[] from = dateTimePickerFrom.Value.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture).Split('/');
+            string[] to = dateTimePickerTo.Value.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture).Split('/');
             string fromDate = string.Format(format, from[0], from[1], from[2]);
             string toDate = string.Format(format, to[0], to[1], to[2]);
             TINResponse companyInfo = GetCompanyInfo(taxCode, text);
@@ -1221,8 +1221,8 @@ namespace TraCuuThongBaoPhatHanh_v2
 
         private void LogException(Exception ex)
         {
-            System.IO.File.AppendAllText(string.Format("{0}\\Log.txt", AppDomain.CurrentDomain.BaseDirectory), $"{DateTime.Now} - {ex}");
-            System.IO.File.AppendAllText(string.Format("{0}\\Log.txt", AppDomain.CurrentDomain.BaseDirectory), $"{DateTime.Now} - {ex.StackTrace}");
+            System.IO.File.AppendAllText($"{AppDomain.CurrentDomain.BaseDirectory}\\Log.txt", $"{Environment.NewLine}{DateTime.Now} - {ex}");
+            System.IO.File.AppendAllText($"{AppDomain.CurrentDomain.BaseDirectory}\\Log.txt", $"{Environment.NewLine}{DateTime.Now} - {ex.StackTrace}");
         }
 
         private bool ValidateCode(string captchaCode)
